@@ -15,3 +15,12 @@ test: clean
 
 job:
 	jobs-submit -F job.json
+
+bingz:
+	tar cvf bin.tgz bin
+
+jobs-template:
+	jobs-template $(APP) > job.json
+
+jobs-submit:
+	jobs-submit -F job.json

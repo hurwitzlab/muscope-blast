@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Author: Ken Youens-Clark <kyclark@email.arizona.edu>
+
 set -u
 
 BIN=$( cd "$( dirname "$0" )" && pwd )
@@ -24,6 +26,7 @@ function HELP() {
   echo
   echo " -p PCT_ID ($PCT_ID)"
   echo " -o OUT_DIR ($OUT_DIR)"
+  echo " -n NUM_THREADS ($NUM_THREADS)"
   echo 
   exit 0
 }
@@ -32,10 +35,13 @@ if [[ $# -eq 0 ]]; then
   HELP
 fi
 
-while getopts :o:p:q:h OPT; do
+while getopts :o:n:p:q:h OPT; do
   case $OPT in
     h)
       HELP
+      ;;
+    n)
+      NUM_THREADS="$OPTARG"
       ;;
     o)
       OUT_DIR="$OPTARG"
@@ -55,6 +61,22 @@ while getopts :o:p:q:h OPT; do
       exit 1
   esac
 done
+
+# 
+# TACC docs recommend tar'ing a "bin" dir of scripts in order 
+# to maintain file permissions such as the executable bit; 
+# otherwise, you would need to "chmod +x" the files or execute
+# like "python script.py ..."
+#
+if [[ -e bin.tgz ]]; then
+  tar xvf bin.tgz
+  PATH=$(BIN)/bin:$PATH
+fi
+
+if [[ $NUM_THREADS -lt 1 ]]; then
+  echo "NUM_THREADS \"$NUM_THREADS\" cannot be less than 1"
+  exit 1
+fi
 
 if [[ -d "$OUT_DIR" ]]; then
   mkdir -p "$OUT_DIR"
@@ -78,15 +100,18 @@ if [[ $NUM_INPUT -lt 1 ]]; then
   exit 1
 fi
 
+# Here is a place for fasplit.py to ensure not too 
+# many sequences in each query.
+
 BLAST_DIR="$WORK/ohana/blast"
 
 if [[ ! -d "$BLAST_DIR" ]]; then
-  echo BLAST_DIR \"$BLAST_DIR\" does not exist.
+  echo "BLAST_DIR \"$BLAST_DIR\" does not exist."
   exit 1
 fi
 
-BLAST_DIR=$WORK/ohana/blast
-BLAST_ARGS="-perc_identity $PCT_ID -outfmt 6"
+BLAST_DIR="$WORK/ohana/blast"
+BLAST_ARGS="-perc_identity $PCT_ID -outfmt 6 -num_threads $NUM_THREADS"
 PARAM="$$.param"
 
 cat /dev/null > $PARAM # make sure it's empty
@@ -122,8 +147,8 @@ while read INPUT_FILE; do
   fi
 
   if [[ ${#BLAST_TO_DNA} -gt 0 ]]; then
-    echo "$BLAST_TO_DNA -num_threads $NUM_THREADS -perc_identity $PCT_ID -outfmt 6 -db $BLAST_DIR/contigs -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-contigs" >> $PARAM
-    echo "$BLAST_TO_DNA -num_threads $NUM_THREADS -perc_identity $PCT_ID -outfmt 6 -db $BLAST_DIR/genes -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-genes" >> $PARAM
+    echo "$BLAST_TO_DNA $BLAST_ARGS -db $BLAST_DIR/contigs -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-contigs.tab" >> $PARAM
+    echo "$BLAST_TO_DNA $BLAST_ARGS -db $BLAST_DIR/genes -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-genes.tab" >> $PARAM
   fi
 
   BLAST_TO_PROT=""
@@ -136,7 +161,7 @@ while read INPUT_FILE; do
   fi
 
   if [[ ${#BLAST_TO_PROT} -gt 0 ]]; then
-    echo "$BLAST_TO_PROT -num_threads $NUM_THREADS -outfmt 6 -db $BLAST_DIR/proteins -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-proteins" >> $PARAM
+    echo "$BLAST_TO_PROT $BLAST_ARGS -db $BLAST_DIR/proteins -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-proteins.tab" >> $PARAM
   fi
 done < "$INPUT_FILES"
 
@@ -151,6 +176,10 @@ export LAUNCHER_PPN=4
 $LAUNCHER_DIR/paramrun
 echo "Ended launcher $(date)"
 
+# 
+# Now we need to add Eggnog (and eventually Pfam, KEGG, etc.)
+# annotations to the "*-genes.tab" files.
+# 
 cat /dev/null > $PARAM
 
 ANNOT_DIR=$OUT_DIR/annots
@@ -159,17 +188,22 @@ if [[ ! -d $ANNOT_DIR ]]; then
 fi
 
 GENE_HITS=$(mktemp)
-find $BLAST_OUT_DIR -size +0c -name \*-genes > $GENE_HITS
+find $BLAST_OUT_DIR -size +0c -name \*-genes.tab > $GENE_HITS
 while read FILE; do
-  BASENAME=$(basename $FILE)
+  BASENAME=$(basename $FILE '.tab')
   echo "Annotating $BASENAME"
-  python ./annotate.py -b $FILE -a ${WORK}/ohana/sqlite -o $ANNOT_DIR > $ANNOT_DIR/$BASENAME
+  annotate.py -b "$FILE" -a "${WORK}/ohana/sqlite" -o "$ANNOT_DIR" > "${ANNOT_DIR}/${BASENAME}.tab"
 done < $GENE_HITS
 
-echo "Starting launcher $(date)"
-export LAUNCHER_NJOBS=$(lc $PARAM)
-$LAUNCHER_DIR/paramrun
-echo "Ended launcher $(date)"
+# Probably should run the above annotation with launcher, but I was 
+# having problems with this.
+#echo "Starting launcher $(date)"
+#export LAUNCHER_NJOBS=$(lc $PARAM)
+#$LAUNCHER_DIR/paramrun
+#echo "Ended launcher $(date)"
 
+# 
+# Remove any temporary files
+# 
 rm "$INPUT_FILES"
 rm "$PARAM"
