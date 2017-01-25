@@ -1,1 +1,5 @@
 slurm-*.out
+blast-annotated
+job.json
+out
+err

@@ -6,7 +6,7 @@
     "defaultMaxRunTime": "12:00:00",
     "defaultNodeCount": 1,
     "defaultQueue": "serial",
-    "deploymentPath": "kyclark/applications/muscope-blast-0.0.1/stampede",
+    "deploymentPath": "kyclark/applications/muscope-blast-0.0.2/stampede",
     "deploymentSystem": "data.iplantcollaborative.org",
     "executionSystem": "tacc-stampede-kyclark",
     "executionType": "HPC",
@@ -19,9 +19,9 @@
     "parallelism": "SERIAL",
     "shortDescription": "muSCOPE BLAST",
     "tags": ["muscope","blast"],
-    "templatePath": "run.sh",
+    "templatePath": "template.sh",
     "testPath": "test.sh",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "inputs": [{
         "id": "QUERY",
         "value": {
@@ -39,7 +39,7 @@
         "details": {
             "description": "",
             "label": "Input file(s)",
-            "argument": "-q",
+            "argument": "",
             "showArgument": true
         }
     }],
