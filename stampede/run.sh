@@ -70,7 +70,7 @@ done
 #
 if [[ -e bin.tgz ]]; then
   tar xvf bin.tgz
-  PATH=$(BIN)/bin:$PATH
+  PATH="$BIN/bin:$PATH"
 fi
 
 if [[ $NUM_THREADS -lt 1 ]]; then
@@ -111,7 +111,7 @@ if [[ ! -d "$BLAST_DIR" ]]; then
 fi
 
 BLAST_DIR="$WORK/ohana/blast"
-BLAST_ARGS="-perc_identity $PCT_ID -outfmt 6 -num_threads $NUM_THREADS"
+BLAST_ARGS="-outfmt 6 -num_threads $NUM_THREADS"
 PARAM="$$.param"
 
 cat /dev/null > $PARAM # make sure it's empty
@@ -147,8 +147,8 @@ while read INPUT_FILE; do
   fi
 
   if [[ ${#BLAST_TO_DNA} -gt 0 ]]; then
-    echo "$BLAST_TO_DNA $BLAST_ARGS -db $BLAST_DIR/contigs -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-contigs.tab" >> $PARAM
-    echo "$BLAST_TO_DNA $BLAST_ARGS -db $BLAST_DIR/genes -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-genes.tab" >> $PARAM
+    echo "$BLAST_TO_DNA $BLAST_ARGS -perc_identity $PCT_ID -db $BLAST_DIR/contigs -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-contigs.tab" >> $PARAM
+    echo "$BLAST_TO_DNA $BLAST_ARGS -perc_identity $PCT_ID -db $BLAST_DIR/genes -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-genes.tab" >> $PARAM
   fi
 
   BLAST_TO_PROT=""
@@ -191,7 +191,7 @@ GENE_HITS=$(mktemp)
 find $BLAST_OUT_DIR -size +0c -name \*-genes.tab > $GENE_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
-  echo "Annotating $BASENAME"
+  echo "Annotating $FILE"
   annotate.py -b "$FILE" -a "${WORK}/ohana/sqlite" -o "$ANNOT_DIR" > "${ANNOT_DIR}/${BASENAME}.tab"
 done < $GENE_HITS
 

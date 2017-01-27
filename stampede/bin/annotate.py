@@ -69,7 +69,7 @@ def main():
 
             dbh = dbhs[sample]
             for row in dbh.execute(sql, (seqid,)):
-                print('\t'.join([str(i) for i in row]))
+                print('\t'.join([rec['qseqid']] + list(map(str,row))))
 
 def get_args():
     parser = argparse.ArgumentParser(description='Annotate BLAST for muSCOPE')

@@ -3,3 +3,4 @@ blast-annotated
 out
 err
 bin.tgz
+*.swp
