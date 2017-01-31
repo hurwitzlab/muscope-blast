@@ -17,7 +17,7 @@ job:
 	jobs-submit -F job.json
 
 bingz:
-	tar cvf bin.tgz bin
+	(cd scripts && tar cvf ../bin.tgz *)
 
 jobs-template:
 	jobs-template $(APP) > job.json

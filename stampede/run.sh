@@ -68,8 +68,17 @@ done
 # otherwise, you would need to "chmod +x" the files or execute
 # like "python script.py ..."
 #
-if [[ -e bin.tgz ]]; then
-  tar xvf bin.tgz
+HOST=$(hostname)
+SCRIPTS="scripts.tgz"
+if [[ -e $SCRIPTS ]]; then
+  echo "Untarring $SCRIPTS to bin"
+  if [[ ! -d bin ]]; then
+    mkdir bin
+  fi
+  tar -O bin -xvf $SCRIPTS
+fi
+
+if [[ -e "$BIN/bin" ]]; then
   PATH="$BIN/bin:$PATH"
 fi
 
@@ -165,16 +174,16 @@ while read INPUT_FILE; do
   fi
 done < "$INPUT_FILES"
 
-echo "Starting launcher $(date)"
+echo "Starting launcher for BLAST"
+export LAUNCHER_DIR="$HOME/src/launcher"
 export LAUNCHER_NJOBS=$(lc $PARAM)
 export LAUNCHER_NHOSTS=4
-export LAUNCHER_DIR="$HOME/src/launcher"
 export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
 export LAUNCHER_RMI=SLURM
 export LAUNCHER_JOB_FILE=$PARAM
 export LAUNCHER_PPN=4
 $LAUNCHER_DIR/paramrun
-echo "Ended launcher $(date)"
+echo "Ended launcher for BLAST"
 
 # 
 # Now we need to add Eggnog (and eventually Pfam, KEGG, etc.)
@@ -182,25 +191,21 @@ echo "Ended launcher $(date)"
 # 
 cat /dev/null > $PARAM
 
-ANNOT_DIR=$OUT_DIR/annots
-if [[ ! -d $ANNOT_DIR ]]; then
-  mkdir -p $ANNOT_DIR
-fi
-
 GENE_HITS=$(mktemp)
 find $BLAST_OUT_DIR -size +0c -name \*-genes.tab > $GENE_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Annotating $FILE"
-  annotate.py -b "$FILE" -a "${WORK}/ohana/sqlite" -o "$ANNOT_DIR" > "${ANNOT_DIR}/${BASENAME}.tab"
+  echo "annotate.py -b \"$FILE\" -a \"${WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $PARAM
 done < $GENE_HITS
 
 # Probably should run the above annotation with launcher, but I was 
 # having problems with this.
-#echo "Starting launcher $(date)"
-#export LAUNCHER_NJOBS=$(lc $PARAM)
-#$LAUNCHER_DIR/paramrun
-#echo "Ended launcher $(date)"
+echo "Starting launcher for annotation"
+export LAUNCHER_NHOSTS=1
+export LAUNCHER_NJOBS=$(lc $PARAM)
+$LAUNCHER_DIR/paramrun
+echo "Ended launcher for annotation"
 
 # 
 # Remove any temporary files
