@@ -9,4 +9,10 @@
 #SBATCH --mail-type BEGIN,END,FAIL
 #SBATCH --mail-user kyclark@email.arizona.edu
 
-run.sh -q "$SCRATCH/muscope-blast/test.fa" -o "$SCRATCH/muscope-blast/test"
+OUT_DIR="$SCRATCH/muscope-blast/test"
+
+if [[ -d $OUT_DIR ]]; then
+  rm -rf $OUT_DIR
+fi
+
+run.sh -q "$SCRATCH/muscope-blast/test.fa" -o $OUT_DIR
