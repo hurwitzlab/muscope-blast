@@ -75,7 +75,7 @@ if [[ -e $SCRIPTS ]]; then
   if [[ ! -d bin ]]; then
     mkdir bin
   fi
-  tar -O bin -xvf $SCRIPTS
+  tar -C bin -xvf $SCRIPTS
 fi
 
 if [[ -e "$BIN/bin" ]]; then
@@ -121,9 +121,9 @@ fi
 
 BLAST_DIR="$WORK/ohana/blast"
 BLAST_ARGS="-outfmt 6 -num_threads $NUM_THREADS"
-PARAM="$$.param"
+BLAST_PARAM="$$.blast.param"
 
-cat /dev/null > $PARAM # make sure it's empty
+cat /dev/null > $BLAST_PARAM # make sure it's empty
 
 i=0
 while read INPUT_FILE; do
@@ -156,8 +156,8 @@ while read INPUT_FILE; do
   fi
 
   if [[ ${#BLAST_TO_DNA} -gt 0 ]]; then
-    echo "$BLAST_TO_DNA $BLAST_ARGS -perc_identity $PCT_ID -db $BLAST_DIR/contigs -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-contigs.tab" >> $PARAM
-    echo "$BLAST_TO_DNA $BLAST_ARGS -perc_identity $PCT_ID -db $BLAST_DIR/genes -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-genes.tab" >> $PARAM
+    echo "$BLAST_TO_DNA $BLAST_ARGS -perc_identity $PCT_ID -db $BLAST_DIR/contigs -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-contigs.tab" >> $BLAST_PARAM
+    echo "$BLAST_TO_DNA $BLAST_ARGS -perc_identity $PCT_ID -db $BLAST_DIR/genes -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-genes.tab" >> $BLAST_PARAM
   fi
 
   BLAST_TO_PROT=""
@@ -170,45 +170,47 @@ while read INPUT_FILE; do
   fi
 
   if [[ ${#BLAST_TO_PROT} -gt 0 ]]; then
-    echo "$BLAST_TO_PROT $BLAST_ARGS -db $BLAST_DIR/proteins -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-proteins.tab" >> $PARAM
+    echo "$BLAST_TO_PROT $BLAST_ARGS -db $BLAST_DIR/proteins -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-proteins.tab" >> $BLAST_PARAM
   fi
 done < "$INPUT_FILES"
+rm "$INPUT_FILES"
 
 echo "Starting launcher for BLAST"
 export LAUNCHER_DIR="$HOME/src/launcher"
-export LAUNCHER_NJOBS=$(lc $PARAM)
+export LAUNCHER_NJOBS=$(lc $BLAST_PARAM)
 export LAUNCHER_NHOSTS=4
 export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
+export LAUNCHER_WORKDIR=$BIN
 export LAUNCHER_RMI=SLURM
-export LAUNCHER_JOB_FILE=$PARAM
+export LAUNCHER_JOB_FILE=$BLAST_PARAM
 export LAUNCHER_PPN=4
+export LAUNCHER_SCHED=interleaved
 $LAUNCHER_DIR/paramrun
 echo "Ended launcher for BLAST"
+
+rm $BLAST_PARAM
 
 # 
 # Now we need to add Eggnog (and eventually Pfam, KEGG, etc.)
 # annotations to the "*-genes.tab" files.
 # 
-cat /dev/null > $PARAM
+ANNOT_PARAM="$$.annot.param"
+cat /dev/null > $ANNOT_PARAM
 
 GENE_HITS=$(mktemp)
 find $BLAST_OUT_DIR -size +0c -name \*-genes.tab > $GENE_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Annotating $FILE"
-  echo "annotate.py -b \"$FILE\" -a \"${WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $PARAM
+  echo "annotate.py -b \"$FILE\" -a \"${WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
 done < $GENE_HITS
 
 # Probably should run the above annotation with launcher, but I was 
 # having problems with this.
 echo "Starting launcher for annotation"
 export LAUNCHER_NHOSTS=1
-export LAUNCHER_NJOBS=$(lc $PARAM)
+export LAUNCHER_NJOBS=$(lc $ANNOT_PARAM)
+export LAUNCHER_JOB_FILE=$ANNOT_PARAM
 $LAUNCHER_DIR/paramrun
 echo "Ended launcher for annotation"
-
-# 
-# Remove any temporary files
-# 
-rm "$INPUT_FILES"
-rm "$PARAM"
+rm "$ANNOT_PARAM"
