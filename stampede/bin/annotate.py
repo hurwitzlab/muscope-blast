@@ -45,7 +45,7 @@ def main():
     # print headers for output
     out_file = os.path.join(out_dir, os.path.basename(blast_out))
     out_fh   = open(out_file, 'wt')
-    out_fh.write('\t'.join(gene_fields) + '\n')
+    out_fh.write('\t'.join(['qseqid', 'sample'] + gene_fields) + '\n')
 
     def err(msg):
         if args.verbose:
@@ -71,9 +71,10 @@ def main():
 
             dbh = dbhs[sample]
             for row in dbh.execute(sql, (seqid,)):
-                out_fh.write('\t'.join([rec['qseqid']] + list(map(str,row))) + '\n')
-            out_fh.close()
+                out_fh.write('\t'.join([rec['qseqid'], sample] 
+                    + list(map(str,row))) + '\n')
 
+    out_fh.close()
     print('Done, see output file "{}"'.format(out_file))
 
 def get_args():
