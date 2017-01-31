@@ -4,7 +4,7 @@ EMAIL = kyclark@email.arizona.edu
 clean:
 	find . \( -name \*.conf -o -name \*.out -o -name \*.log -o -name \*.param -o -name launcher-\* \) -exec rm {} \;
 
-upload:
+upload: clean
 	files-upload -F $(WORK)/$(APP) kyclark/applications
 
 update:
@@ -16,7 +16,7 @@ test: clean
 job:
 	jobs-submit -F job.json
 
-bingz:
+scriptsgz:
 	(cd scripts && tar cvf ../bin.tgz *)
 
 jobs-template:
