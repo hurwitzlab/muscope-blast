@@ -2,5 +2,5 @@ slurm-*.out
 blast-annotated
 out
 err
-bin.tgz
+scripts.tgz
 *.swp
