@@ -16,7 +16,7 @@ def main():
     verbose   = args.verbose
 
     if not os.path.isfile(blast_out):
-        print('--blast_out file "{}" is not valid'.format(blast_out))
+        print('--blast_out file "{}" is not a file'.format(blast_out))
         exit(1)
 
     if not os.path.isdir(annot_dir):
@@ -43,7 +43,9 @@ def main():
     sql = 'select ' + ', '.join(gene_fields) + ' from gene where gene_name=?'
 
     # print headers for output
-    print('\t'.join(gene_fields))
+    out_file = os.path.join(out_dir, os.path.basename(blast_out))
+    out_fh   = open(out_file, 'wt')
+    out_fh.write('\t'.join(gene_fields) + '\n')
 
     def err(msg):
         if args.verbose:
@@ -69,7 +71,10 @@ def main():
 
             dbh = dbhs[sample]
             for row in dbh.execute(sql, (seqid,)):
-                print('\t'.join([rec['qseqid']] + list(map(str,row))))
+                out_fh.write('\t'.join([rec['qseqid']] + list(map(str,row))) + '\n')
+            out_fh.close()
+
+    print('Done, see output file "{}"'.format(out_file))
 
 def get_args():
     parser = argparse.ArgumentParser(description='Annotate BLAST for muSCOPE')
