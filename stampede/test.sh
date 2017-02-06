@@ -7,12 +7,12 @@
 #SBATCH -p normal
 #SBATCH -J mublast
 #SBATCH --mail-type BEGIN,END,FAIL
-#SBATCH --mail-user kyclark@email.arizona.edu
+#SBATCH --mail-user jklynch@email.arizona.edu
 
-OUT_DIR="$SCRATCH/muscope-blast/test"
+OUT_DIR="$SCRATCH/muscope-last/test"
 
 if [[ -d $OUT_DIR ]]; then
   rm -rf $OUT_DIR
 fi
 
-run.sh -q "$SCRATCH/muscope-blast/test.fa" -o $OUT_DIR
+run.sh -q "$SCRATCH/muscope-last/test.fa" -o $OUT_DIR
