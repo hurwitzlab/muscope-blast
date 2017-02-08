@@ -4,6 +4,8 @@
 
 set -u
 
+KYC_WORK=/work/03137/kyclark
+
 BIN=$( cd "$( dirname "$0" )" && pwd )
 QUERY=""
 PCT_ID=".98"
@@ -111,14 +113,14 @@ fi
 # Here is a place for fasplit.py to ensure not too 
 # many sequences in each query.
 
-BLAST_DIR="$WORK/ohana/blast"
+BLAST_DIR="$KYC_WORK/ohana/blast"
 
 if [[ ! -d "$BLAST_DIR" ]]; then
   echo "BLAST_DIR \"$BLAST_DIR\" does not exist."
   exit 1
 fi
 
-BLAST_DIR="$WORK/ohana/blast"
+BLAST_DIR="$KYC_WORK/ohana/blast"
 BLAST_ARGS="-outfmt 6 -num_threads $NUM_THREADS"
 BLAST_PARAM="$$.blast.param"
 
@@ -201,7 +203,7 @@ find $BLAST_OUT_DIR -size +0c -name \*-genes.tab > $GENE_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Annotating $FILE"
-  echo "annotate.py -b \"$FILE\" -a \"${WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
+  echo "annotate.py -b \"$FILE\" -a \"${KYC_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
 done < $GENE_HITS
 
 # Probably should run the above annotation with launcher, but I was 
