@@ -219,6 +219,11 @@ rm "$ANNOT_PARAM"
 #
 # Now we need to extract the Ohana sequences for the BLAST hits.
 #
+# On stampede load python 3 like this:
+module load gcc/4.9.3
+module load python3
+pip3 install --user biopython
+#
 EXTRACTSEQS_PARAM="$$.extractseqs.param"
 cat /dev/null > $EXTRACTSEQS_PARAM
 
