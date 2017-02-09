@@ -34,7 +34,7 @@ def main():
         dbhs[base] = sqlite3.connect(os.path.join(annot_dir, db))
 
     if not os.path.isdir(out_dir):
-        os.makedirs(out_dir, exist_ok=True)
+        os.mkdir(out_dir)
 
     blast_fields = ['qseqid', 'sseqid', 'pident', 'length', 'mismatch',
         'gapopen', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore']
