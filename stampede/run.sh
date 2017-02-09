@@ -232,7 +232,7 @@ find $BLAST_OUT_DIR -size +0c -name \*.tab > $BLAST_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Extracting Ohana sequences of BLAST hits for $FILE"
-  echo "python extractseqs.py \"$FILE\"  \"${KYC_WORK}/ohana\" \"${OUT_DIR}/annotations\"" >> $EXTRACTSEQS_PARAM
+  echo "python3 extractseqs.py \"$FILE\"  \"${KYC_WORK}/ohana\" \"${OUT_DIR}/annotations\"" >> $EXTRACTSEQS_PARAM
 done < $BLAST_HITS
 
 # Probably should run the above annotation with launcher, but I was
