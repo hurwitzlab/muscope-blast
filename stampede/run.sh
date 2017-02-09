@@ -191,6 +191,11 @@ echo "Ended launcher for BLAST"
 
 rm $BLAST_PARAM
 
+# On stampede load python 3 like this:
+module load gcc/4.9.3
+module load python3
+pip3 install --user biopython
+
 # 
 # Now we need to add Eggnog (and eventually Pfam, KEGG, etc.)
 # annotations to the "*-genes.tab" files.
@@ -203,7 +208,7 @@ find $BLAST_OUT_DIR -size +0c -name \*-genes.tab > $GENE_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Annotating $FILE"
-  echo "annotate.py -b \"$FILE\" -a \"${KYC_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
+  echo "python3 annotate.py -b \"$FILE\" -a \"${KYC_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
 done < $GENE_HITS
 
 # Probably should run the above annotation with launcher, but I was 
@@ -218,11 +223,6 @@ rm "$ANNOT_PARAM"
 
 #
 # Now we need to extract the Ohana sequences for the BLAST hits.
-#
-# On stampede load python 3 like this:
-module load gcc/4.9.3
-module load python3
-pip3 install --user biopython
 #
 EXTRACTSEQS_PARAM="$$.extractseqs.param"
 cat /dev/null > $EXTRACTSEQS_PARAM
