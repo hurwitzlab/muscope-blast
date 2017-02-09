@@ -70,7 +70,7 @@ done
 # otherwise, you would need to "chmod +x" the files or execute
 # like "python script.py ..."
 #
-SCRIPTS="scripts.tgz"
+SCRIPTS="bin.tgz"
 if [[ -e $SCRIPTS ]]; then
   echo "Untarring $SCRIPTS to bin"
   if [[ ! -d bin ]]; then
