@@ -7,7 +7,7 @@
 #SBATCH -p normal
 #SBATCH -J mublast
 #SBATCH --mail-type BEGIN,END,FAIL
-#SBATCH --mail-user ${USER}@email.arizona.edu
+#SBATCH --mail-user jklynch@email.arizona.edu
 
 OUT_DIR="$SCRATCH/muscope-blast/test"
 
