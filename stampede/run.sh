@@ -208,7 +208,7 @@ find $BLAST_OUT_DIR -size +0c -name \*-genes.tab > $GENE_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Annotating $FILE"
-  echo "python3 annotate.py -b \"$FILE\" -a \"${KYC_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
+  echo "python3 $BIN/bin/annotate.py -b \"$FILE\" -a \"${KYC_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
 done < $GENE_HITS
 
 # Probably should run the above annotation with launcher, but I was 
@@ -232,7 +232,7 @@ find $BLAST_OUT_DIR -size +0c -name \*.tab > $BLAST_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Extracting Ohana sequences of BLAST hits for $FILE"
-  echo "python3 extractseqs.py \"$FILE\"  \"${KYC_WORK}/ohana\" \"${OUT_DIR}/ohana_hits\"" >> $EXTRACTSEQS_PARAM
+  echo "python3 $BIN/bin/extractseqs.py \"$FILE\"  \"${KYC_WORK}/ohana\" \"${OUT_DIR}/ohana_hits\"" >> $EXTRACTSEQS_PARAM
 done < $BLAST_HITS
 
 # Probably should run the above annotation with launcher, but I was
