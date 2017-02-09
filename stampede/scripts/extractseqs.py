@@ -67,7 +67,7 @@ def get_blast_output_file_paths(blast_output_dp):
             yield input_filename, seq_type, blast_output_fp
 
 
-def extract_matching_sequences(blast_output_fp, ohana_sequence_dp, ohana_hit_output_dp):
+def extract_matching_sequences(blast_output_fp, ohana_sequence_dp, ohana_hit_output_dp, blast_hit_limit):
     """Parse each .tab file in blast_output_dp to find matched sequence ids, then extract matched
     sequences from the blast_db_fasta_dp. Write extracted sequences to sequence_output_dp.
     
@@ -119,7 +119,7 @@ def extract_matching_sequences(blast_output_fp, ohana_sequence_dp, ohana_hit_out
     seq_type_blast_hits = blast_db_hits[seq_type]
 
     with open(blast_output_fp, 'rt') as blast_output_file:
-        for blast_hit_id, ohana_blast_db, seq_id in itertools.islice(extract_blast_db_and_sequence_id(blast_output_file), 3):
+        for blast_hit_id, ohana_blast_db, seq_id in itertools.islice(extract_blast_db_and_sequence_id(blast_output_file), blast_hit_limit):
             seq_type_blast_hits[ohana_blast_db].add(blast_hit_id)
             print('  complete BLAST id: "{}"'.format(blast_hit_id))
             print('  Ohana BLAST db: "{}"'.format(ohana_blast_db))
@@ -162,6 +162,8 @@ if __name__ == '__main__':
     arg_parser.add_argument('blast_output_fp', help='file of BLAST hits')
     arg_parser.add_argument('ohana_sequence_dp', help='directory of Ohana contigs, genes, proteins')
     arg_parser.add_argument('ohana_hit_output_dp', help='directory for Ohana BLAST hit output')
+    arg_parser.add_argument(
+        '-l', '--blast-hit-limit', type=int, default=None,  help='extract only the first <blast-hit-limit> BLAST hits')
     args = arg_parser.parse_args()
     print(args)
 
