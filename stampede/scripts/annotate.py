@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Author: Ken Youens-Clark <kyclark@email.arizona.edu>
 
@@ -23,7 +23,7 @@ def main():
         print('--annot_dir "{}" is not valid'.format(annot_dir))
         exit(1)
 
-    dbs = filter(lambda x: x.endswith('.db'), os.listdir(annot_dir))
+    dbs = list(filter(lambda x: x.endswith('.db'), os.listdir(annot_dir)))
     if len(dbs) == 0:
         print('Cannot find SQLite dbs in annot_dir "{}"'.format(annot_dir))
         exit(1)
@@ -33,8 +33,7 @@ def main():
         base, ext = os.path.splitext(db)
         dbhs[base] = sqlite3.connect(os.path.join(annot_dir, db))
 
-    if not os.path.isdir(out_dir):
-        os.mkdir(out_dir)
+    os.makedirs(out_dir, exist_ok=True)
 
     blast_fields = ['qseqid', 'sseqid', 'pident', 'length', 'mismatch',
         'gapopen', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore']
@@ -48,7 +47,7 @@ def main():
     out_fh.write('\t'.join(['qseqid', 'sample'] + gene_fields) + '\n')
 
     def err(msg):
-        if args.verbose:
+        if verbose:
             sys.stderr.write(msg + '\n')
 
     # BLAST output will contain gene ids like "HOT233_1_0770m_c4_1"
