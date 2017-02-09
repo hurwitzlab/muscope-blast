@@ -215,3 +215,27 @@ export LAUNCHER_JOB_FILE=$ANNOT_PARAM
 $LAUNCHER_DIR/paramrun
 echo "Ended launcher for annotation"
 rm "$ANNOT_PARAM"
+
+#
+# Now we need to extract the Ohana sequences for the BLAST hits.
+#
+EXTRACTSEQS_PARAM="$$.extractseqs.param"
+cat /dev/null > $EXTRACTSEQS_PARAM
+
+BLAST_HITS=$(mktemp)
+find $BLAST_OUT_DIR -size +0c -name \*.tab > $BLAST_HITS
+while read FILE; do
+  BASENAME=$(basename $FILE '.tab')
+  echo "Extracting Ohana sequences of BLAST hits for $FILE"
+  echo "python extractseqs.py \"$FILE\"  \"${KYC_WORK}/ohana\" \"${OUT_DIR}/annotations\"" >> $EXTRACTSEQS_PARAM
+done < $BLAST_HITS
+
+# Probably should run the above annotation with launcher, but I was
+# having problems with this.
+echo "Starting launcher for Ohana sequence extraction"
+export LAUNCHER_NHOSTS=1
+export LAUNCHER_NJOBS=$(lc $EXTRACTSEQS_PARAM)
+export LAUNCHER_JOB_FILE=$EXTRACTSEQS_PARAM
+$LAUNCHER_DIR/paramrun
+echo "Ended launcher for Ohana sequence extraction"
+rm "$EXTRACTSEQS_PARAM"
