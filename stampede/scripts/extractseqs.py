@@ -89,55 +89,57 @@ def extract_matching_sequences(blast_output_dp, ohana_sequence_dp, ohana_hit_out
     :param ohana_hit_output_dp: (str) path to directory for matching sequence output
     """
     if not os.path.isdir(blast_output_dp):
-        print('BLAST output directory "{}" does not exist'.format(blast_output_dp))
+        print('BLAST output directory "{}" does not exist.'.format(blast_output_dp))
         exit(1)
     if not os.path.isdir(ohana_sequence_dp):
-        print('BLAST database directory "{}" does not exist'.format(ohana_sequence_dp))
+        print('BLAST database directory "{}" does not exist.'.format(ohana_sequence_dp))
         exit(1)
     if not os.path.isdir(ohana_hit_output_dp):
-        print('Sequence output directory "{}" does not exist'.format(ohana_hit_output_dp))
-        exit(1)
+        print('Sequence output directory "{}" will be created.'.format(ohana_hit_output_dp))
+        os.makedirs(ohana_hit_output_dp, exist_ok=True)
 
-    def default_dict_list_factory():
-        return collections.defaultdict(list)
-    blast_db_hits = collections.defaultdict(default_dict_list_factory)
+    def default_dict_set_factory():
+        return collections.defaultdict(set)
+    blast_db_hits = collections.defaultdict(default_dict_set_factory)
 
     for blast_input_file_name, seq_type, blast_output_fp in get_blast_output_file_paths(blast_output_dp):
         # blast_input_file_name is a user-supplied file that was BLASTed against the Ohana catalog
         print('BLAST input file name: "{}"'.format(blast_input_file_name))
         print('sequence type: {}'.format(seq_type))
         print('BLAST output file path: "{}"'.format(blast_output_fp))
-        
+
         seq_type_blast_hits = blast_db_hits[seq_type]
         
         with open(blast_output_fp, 'rt') as blast_output_file:
             for ohana_blast_db, seq_id in itertools.islice(extract_blast_db_and_sequence_id(blast_output_file), 3):
-                seq_type_blast_hits[ohana_blast_db].append(seq_id)
+                seq_type_blast_hits[ohana_blast_db].add(seq_id)
                 print('  Ohana BLAST db: "{}"'.format(ohana_blast_db))
                 print('  sequence id: "{}"'.format(seq_id))
 
         print('finished parsing BLAST output file "{}"'.format(blast_output_fp))
-    # all the BLAST output files have been processed
+
     # now use blast_db_hits to extract the matched sequences from the BLAST input files
     pprint.pprint(blast_db_hits)
-    
+
     seq_type_ext = {'contigs': '.fa', 'genes': '.fna', 'proteins': '.faa'}
     for seq_type, seq_type_blast_hits in blast_db_hits.items():
         print('extracting sequences of type "{}"'.format(seq_type))
         for blast_db_name, matched_sequence_ids in sorted(seq_type_blast_hits.items()):
             blast_db_fasta_fp = os.path.join(ohana_sequence_dp, blast_db_name, seq_type + seq_type_ext[seq_type])
-            
+
             if not os.path.exists(blast_db_fasta_fp):
                 print('ERROR: "{}" does not exist'.format(blast_db_fasta_fp))
             else:
                 print('extracting "{}" sequence hits from "{}"'.format(seq_type, blast_db_fasta_fp))
-                with open(blast_db_fasta_fp, 'rt') as blast_db_file:
+                output_fp = os.path.join(ohana_hit_output_dp, blast_db_name + '-' + seq_type + seq_type_ext[seq_type])
+                with open(blast_db_fasta_fp, 'rt') as blast_db_file, open(output_fp, 'wt') as output_file:
                     seq_id_search_set = set(matched_sequence_ids)
                     for seq in SeqIO.parse(blast_db_file, 'fasta'):
                         if seq.id in seq_id_search_set:
-                            print(seq)
+                            #print(seq)
+                            SeqIO.write(seq, output_file, 'fasta')
                             seq_id_search_set.remove(seq.id)
-                            
+
                             if len(seq_id_search_set) == 0:
                                 break
                 for seq_id in seq_id_search_set:
