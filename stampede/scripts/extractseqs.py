@@ -40,7 +40,7 @@ def extract_blast_db_and_sequence_id(blast_output_file):
         if m is None:
             raise Exception()
         else:
-            yield m.group('db'), m.group('seq_id')
+            yield s, m.group('db'), m.group('seq_id')
     print('finished parsing {} rows of BLAST output'.format(i+1))
 
 
@@ -119,8 +119,9 @@ def extract_matching_sequences(blast_output_fp, ohana_sequence_dp, ohana_hit_out
     seq_type_blast_hits = blast_db_hits[seq_type]
 
     with open(blast_output_fp, 'rt') as blast_output_file:
-        for ohana_blast_db, seq_id in itertools.islice(extract_blast_db_and_sequence_id(blast_output_file), 3):
-            seq_type_blast_hits[ohana_blast_db].add(seq_id)
+        for blast_hit_id, ohana_blast_db, seq_id in itertools.islice(extract_blast_db_and_sequence_id(blast_output_file), 3):
+            seq_type_blast_hits[ohana_blast_db].add(blast_hit_id)
+            print('  complete BLAST id: "{}"'.format(blast_hit_id))
             print('  Ohana BLAST db: "{}"'.format(ohana_blast_db))
             print('  sequence id: "{}"'.format(seq_id))
 
@@ -141,16 +142,16 @@ def extract_matching_sequences(blast_output_fp, ohana_sequence_dp, ohana_hit_out
                 print('extracting "{}" sequence hits from "{}"'.format(seq_type, blast_db_fasta_fp))
                 output_fp = os.path.join(ohana_hit_output_dp, blast_input_basename + '-' + blast_db_name + '-' + seq_type + seq_type_ext[seq_type])
                 with open(blast_db_fasta_fp, 'rt') as blast_db_file, open(output_fp, 'wt') as output_file:
-                    seq_id_search_set = set(matched_sequence_ids)
+                    blast_hit_id_search_set = set(matched_sequence_ids)
                     for seq in SeqIO.parse(blast_db_file, 'fasta'):
-                        if seq.id in seq_id_search_set:
+                        if seq.id in blast_hit_id_search_set:
                             #print(seq)
                             SeqIO.write(seq, output_file, 'fasta')
-                            seq_id_search_set.remove(seq.id)
+                            blast_hit_id_search_set.remove(seq.id)
 
-                            if len(seq_id_search_set) == 0:
+                            if len(blast_hit_id_search_set) == 0:
                                 break
-                for seq_id in seq_id_search_set:
+                for seq_id in blast_hit_id_search_set:
                     print('  ERROR: failed to find "{}"'.format(seq_id))
             #for matched_sequence_id in matched_sequence_ids:
             #    print('  extracting sequence id "{}"'.format(matched_sequence_id))
