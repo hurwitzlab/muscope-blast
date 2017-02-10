@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+#
+# extractseqs.py
+#
+# Extract BLAST hits from contig, gene or protein BLAST database.
+#
+# This script is part of the muSCOPE-BLAST CyVerse application.
+#
 # Demonstrate how to take sequence identifiers from BLAST output files
 #     + test.fa-contigs.tab
 #     + test.fa-genes.tab
@@ -7,11 +15,11 @@
 # Each .tab file looks like this:
 # 
 # ```
-# A	HOT234_1_0200m_rep_c55158_2	100.00	147	0	0	1	147	400	546	2e-70	 272
-# A	HOT229_1_0200m_c10096_4	100.00	147	0	0	1	147	400	546	2e-70	 272
-# A	HOT233_1c_0200m_c3_1	100.00	147	0	0	1	147	1	147	2e-70	 272
-# A	HOT238_1c_0200m_rep_c260499_1	100.00	147	0	0	1	147	400	546	2e-70	 272
-# A	HOT236_1_0200m_c24599_1	100.00	147	0	0	1	147	358	504	2e-70	 272
+# A HOT234_1_0200m_rep_c55158_2 100.00  147 0   0   1   147 400 546 2e-70    272
+# A HOT229_1_0200m_c10096_4 100.00  147 0   0   1   147 400 546 2e-70    272
+# A HOT233_1c_0200m_c3_1    100.00  147 0   0   1   147 1   147 2e-70    272
+# A HOT238_1c_0200m_rep_c260499_1   100.00  147 0   0   1   147 400 546 2e-70    272
+# A HOT236_1_0200m_c24599_1 100.00  147 0   0   1   147 358 504 2e-70    272
 # ```
 # 
 # The second column should be parsed to extract the source file (e.g. `HOT234_1_0200m`) and the matched
@@ -159,9 +167,9 @@ def extract_matching_sequences(blast_output_fp, ohana_sequence_dp, ohana_hit_out
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('blast_output_fp', help='file of BLAST hits')
-    arg_parser.add_argument('ohana_sequence_dp', help='directory of Ohana contigs, genes, proteins')
-    arg_parser.add_argument('ohana_hit_output_dp', help='directory for Ohana BLAST hit output')
+    arg_parser.add_argument('blast_output_fp', metavar='FILE', help='file of BLAST hits')
+    arg_parser.add_argument('ohana_sequence_dp', metavar='DIR', help='directory of Ohana contigs, genes, proteins')
+    arg_parser.add_argument('ohana_hit_output_dp', metavar='DIR', help='directory for Ohana BLAST hit output')
     arg_parser.add_argument(
         '-l', '--blast-hit-limit', type=int, default=None,  help='extract only the first <blast-hit-limit> BLAST hits')
     args = arg_parser.parse_args()

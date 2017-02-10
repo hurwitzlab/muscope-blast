@@ -1,11 +1,11 @@
-APP = muscope-blast-0.0.2
-EMAIL = kyclark@email.arizona.edu
+APP = muscope-blast-0.0.3
+EMAIL = jklynch@email.arizona.edu
 
 clean:
 	find . \( -name \*.conf -o -name \*.out -o -name \*.log -o -name \*.param -o -name launcher-\* \) -exec rm {} \;
 
 upload: clean
-	files-upload -F $(WORK)/$(APP) kyclark/applications
+	files-upload -F $(WORK)/$(APP) jklynch/applications
 
 update:
 	apps-addupdate -F app.json

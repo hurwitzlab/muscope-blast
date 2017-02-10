@@ -1,9 +1,9 @@
 {
   "name": "muscope-blast-test",
-  "appId": "muscope-blast-0.0.2",
+  "appId": "muscope-blast-0.0.3",
   "archive": true,
   "inputs": {
-    "QUERY": "agave://data.iplantcollaborative.org/kyclark/data/muscope/blast/test.fa"
+    "QUERY": "agave://data.iplantcollaborative.org/jklynch/data/muscope/blast/test.fa"
   },
   "parameter": {
   }
