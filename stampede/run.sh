@@ -235,8 +235,6 @@ while read FILE; do
   echo "python3 $BIN/bin/extractseqs.py \"$FILE\"  \"${KYC_WORK}/ohana/HOT\" \"${OUT_DIR}/ohana_hits\"" >> $EXTRACTSEQS_PARAM
 done < $BLAST_HITS
 
-# Probably should run the above annotation with launcher, but I was
-# having problems with this.
 echo "Starting launcher for Ohana sequence extraction"
 export LAUNCHER_NHOSTS=1
 export LAUNCHER_NJOBS=$(lc $EXTRACTSEQS_PARAM)
@@ -244,3 +242,25 @@ export LAUNCHER_JOB_FILE=$EXTRACTSEQS_PARAM
 $LAUNCHER_DIR/paramrun
 echo "Ended launcher for Ohana sequence extraction"
 rm "$EXTRACTSEQS_PARAM"
+
+#
+# Finally add a header row to the BLAST output files.
+#
+INSERTHDR_PARAMS="$$.inserthdr.param"
+cat /dev/null > $INSERTHDR_PARAMS
+
+BLAST_HITS=$(mktemp)
+find $BLAST_OUT_DIR -size +0c -name \*.tab > $BLAST_HITS
+while read FILE; do
+  BASENAME=$(basename $FILE '.tab')
+  echo "Inserting header in BLAST output $FILE"
+  echo "python3 $BIN/bin/inserthdr.py \"$FILE\"" >> $INSERTHDR_PARAMS
+done < $BLAST_HITS
+
+echo "Starting launcher for BLAST header insertion"
+export LAUNCHER_NHOSTS=1
+export LAUNCHER_NJOBS=$(lc $INSERTHDR_PARAMS)
+export LAUNCHER_JOB_FILE=$INSERTHDR_PARAMS
+$LAUNCHER_DIR/paramrun
+echo "Ended launcher for BLAST header insertion"
+rm "$INSERTHDR_PARAMS"
