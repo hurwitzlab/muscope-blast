@@ -1,12 +1,12 @@
 APP = muscope-blast
-VERSION=0.0.3
+VERSION = 0.0.4
 EMAIL = jklynch@email.arizona.edu
 
 clean:
 	find . \( -name \*.conf -o -name \*.out -o -name \*.log -o -name \*.param -o -name launcher-\* \) -exec rm {} \;
 
 upload: clean
-	files-upload -F $(WORK)/$(APP) $(CYVERSEUSERNAME)/applications/$(APP)-$(VERSION)
+	files-upload -F $(WORK)/cyverse-apps/$(APP) $(CYVERSEUSERNAME)/applications/$(APP)-$(VERSION)
 
 update:
 	apps-addupdate -F app.json

@@ -6,7 +6,7 @@
     "defaultMaxRunTime": "12:00:00",
     "defaultNodeCount": 1,
     "defaultQueue": "serial",
-    "deploymentPath": "jklynch/applications/muscope-blast-0.0.3/stampede",
+    "deploymentPath": "jklynch/applications/muscope-blast-0.0.4/stampede",
     "deploymentSystem": "data.iplantcollaborative.org",
     "executionSystem": "tacc-stampede-jklynch",
     "executionType": "HPC",
@@ -21,7 +21,7 @@
     "tags": ["muscope","blast"],
     "templatePath": "template.sh",
     "testPath": "test.sh",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "inputs": [{
         "id": "QUERY",
         "value": {
