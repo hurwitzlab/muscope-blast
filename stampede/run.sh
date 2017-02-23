@@ -264,3 +264,8 @@ export LAUNCHER_JOB_FILE=$INSERTHDR_PARAMS
 $LAUNCHER_DIR/paramrun
 echo "Ended launcher for BLAST header insertion"
 rm "$INSERTHDR_PARAMS"
+
+#
+# Clean up the bin directory
+#
+rm -rf bin
