@@ -270,4 +270,4 @@ rm "$INSERTHDR_PARAMS"
 #
 # Clean up the bin directory
 #
-rm -rf bin
+rm -rf $BIN/bin

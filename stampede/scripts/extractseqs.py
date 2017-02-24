@@ -153,7 +153,6 @@ def get_blast_reference_hits(blast_output_file, blast_output_row_limit):
 
     sample_sequence_pattern = re.compile(r'^(?P<sample_id>HOT\d+_(\d*c?_)?\d+m)')
     for i, blast_output_row in enumerate(itertools.islice(blast_output_file, blast_output_row_limit)):
-        print(blast_output_row)
         try:
             _, sample_sequence, _ = blast_output_row.strip().split('\t', maxsplit=2)
             sample_id = sample_sequence_pattern.match(sample_sequence).group('sample_id')
