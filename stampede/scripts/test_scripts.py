@@ -57,8 +57,33 @@ def test_find_sequences__first():
     assert search_results[0].id == 'A'
 
 
+def test_find_sequences__middle():
+    fasta_file = io.StringIO(fasta_text)
+    search_results = list(extractseqs.find_sequences(['B'], fasta_file=fasta_file))
+    assert len(search_results) == 1
+    assert search_results[0].id == 'B'
+
+
 def test_find_sequences__last():
     fasta_file = io.StringIO(fasta_text)
     search_results = list(extractseqs.find_sequences(['C'], fasta_file=fasta_file))
     assert len(search_results) == 1
     assert search_results[0].id == 'C'
+
+
+def test_parse_blast_output_filename():
+    blast_input_file_name, seq_type = extractseqs.parse_muscope_blast_output_filename('/some/dir/test.fa-contigs.tab')
+    assert blast_input_file_name == 'test.fa'
+    assert seq_type == 'contigs'
+
+
+def test_parse_blast_output_filename():
+    blast_input_file_name, seq_type = extractseqs.parse_muscope_blast_output_filename('/some/dir/test.fa-genes.tab')
+    assert blast_input_file_name == 'test.fa'
+    assert seq_type == 'genes'
+
+
+def test_parse_blast_output_filename():
+    blast_input_file_name, seq_type = extractseqs.parse_muscope_blast_output_filename('/some/dir/test.fa-proteins.tab')
+    assert blast_input_file_name == 'test.fa'
+    assert seq_type == 'proteins'
