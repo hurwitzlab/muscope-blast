@@ -257,6 +257,8 @@ while read FILE; do
   echo "python3 $BIN/bin/inserthdr.py \"$FILE\"" >> $INSERTHDR_PARAMS
 done < $BLAST_HITS
 
+cat "$INSERTHDR_PARAMS"
+
 echo "Starting launcher for BLAST header insertion"
 export LAUNCHER_NHOSTS=1
 export LAUNCHER_NJOBS=$(lc $INSERTHDR_PARAMS)
