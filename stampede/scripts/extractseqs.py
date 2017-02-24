@@ -34,6 +34,7 @@ import re
 from Bio import SeqIO
 
 
+
 def main(blast_output_fp, ohana_sequence_dp, ohana_hit_output_dp, blast_hit_limit):
     """Extract sequences corresponding to BLAST hits.
 
@@ -55,12 +56,8 @@ def main(blast_output_fp, ohana_sequence_dp, ohana_hit_output_dp, blast_hit_limi
         os.makedirs(ohana_hit_output_dp, exist_ok=True)
 
     # set up file paths
-    blast_output_filename_pattern = re.compile(r'(?P<input>.+)-(?P<seq_type>(contigs|genes|proteins))\.tab')
-    try:
-        blast_input_file_name, seq_type = blast_output_filename_pattern.search(blast_output_fp).groups()
-    except Exception as e:
-        print('  failed to parse BLAST output file name "{}"'.format(blast_output_fp))
-        raise e
+    blast_input_file_name, seq_type = parse_muscope_blast_output_filename(blast_output_fp)
+
 
     blast_input_base_name = os.path.basename(blast_input_file_name)
     seq_type_ext = {'contigs': '.fa', 'genes': '.fna', 'proteins': '.faa'}
@@ -80,7 +77,7 @@ def main(blast_output_fp, ohana_sequence_dp, ohana_hit_output_dp, blast_hit_limi
     print('finished parsing BLAST output file "{}"'.format(blast_output_fp))
 
     # find each hit from the BLAST output in the corresponding BLAST reference sample FASTA files
-    # and copy the sequence to a file
+    # and copy each sequence to a file
     for blast_ref_sample_name, sample_sequence_ids in sorted(blast_refdb_hits.items()):
         blast_ref_sample_fasta_fp = blast_ref_sample_fasta_file_template.format(refsample=blast_ref_sample_name)
         if not os.path.exists(blast_ref_sample_fasta_fp):
@@ -95,6 +92,22 @@ def main(blast_output_fp, ohana_sequence_dp, ohana_hit_output_dp, blast_hit_limi
                     SeqIO.write(seq, sample_sequence_output_file, 'fasta')
 
                 print('wrote {} sequence(s) to file "{}"'.format(i+1, output_fp))
+
+
+def parse_muscope_blast_output_filename(blast_output_fp):
+    """Parse muscope-blast BLAST output file names such as 'test.fa-contigs.tab' and return the name of the BLAST
+    input file ('test.fa') and the sequence type ('contigs').
+
+    :param blast_output_fp: (str)
+    :return: (str, str) tuple of BLAST input file name and sequence type
+    """
+    blast_output_filename_pattern = re.compile(r'(?P<input>.+)-(?P<seq_type>(contigs|genes|proteins))\.tab')
+    try:
+         _, blast_output_filename = os.path.split(blast_output_fp)
+         return blast_output_filename_pattern.search(blast_output_filename).group('input', 'seq_type')
+    except Exception as e:
+        print('  failed to parse BLAST output file name "{}"'.format(blast_output_fp))
+        raise e
 
 
 def find_sequences(sequence_ids, fasta_file):
