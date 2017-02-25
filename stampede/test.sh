@@ -15,4 +15,4 @@ if [[ -d $OUT_DIR ]]; then
   rm -rf $OUT_DIR
 fi
 
-run.sh -q "$SCRATCH/muscope-blast/test.fa" -o $OUT_DIR -n 2
+run.sh -q "$SCRATCH/muscope-blast/test.fa" -o $OUT_DIR

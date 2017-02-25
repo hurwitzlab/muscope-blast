@@ -8,7 +8,7 @@ BIN=$( cd "$( dirname "$0" )" && pwd )
 QUERY=""
 PCT_ID=".98"
 OUT_DIR="$BIN"
-NUM_THREADS=1
+NUM_THREADS=$SLURM_TASKS_PER_NODE
 
 module load blast
 
@@ -180,6 +180,7 @@ done < "$INPUT_FILES"
 rm "$INPUT_FILES"
 
 echo "Starting launcher for BLAST"
+echo "  NUM_THREADS=$NUM_THREADS"
 echo "  SLURM_JOB_NUM_NODES=$SLURM_JOB_NUM_NODES"
 echo "  SLURM_NTASKS=$SLURM_NTASKS"
 echo "  SLURM_JOB_CPUS_PER_NODE=$SLURM_JOB_CPUS_PER_NODE"
