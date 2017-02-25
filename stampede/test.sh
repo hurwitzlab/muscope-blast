@@ -2,7 +2,7 @@
 
 #SBATCH -A iPlant-Collabs
 #SBATCH -N 1
-#SBATCH -n 1
+#SBATCH -n 4
 #SBATCH -t 00:30:00
 #SBATCH -p development
 #SBATCH -J mublast
@@ -15,4 +15,4 @@ if [[ -d $OUT_DIR ]]; then
   rm -rf $OUT_DIR
 fi
 
-run.sh -q "$SCRATCH/muscope-blast/test.fa" -o $OUT_DIR
+run.sh -q "$SCRATCH/muscope-blast/test.fa" -o $OUT_DIR -n 2
