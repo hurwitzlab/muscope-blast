@@ -2,17 +2,20 @@
 
 # Author: Ken Youens-Clark <kyclark@email.arizona.edu>
 
-set -u
-
 KYC_WORK=/work/03137/kyclark
 
 BIN=$( cd "$( dirname "$0" )" && pwd )
 QUERY=""
 PCT_ID=".98"
 OUT_DIR="$BIN"
-NUM_THREADS=12
+NUM_THREADS=1
 
 module load blast
+
+source activate mublast
+
+# after source activate mublast
+set -u
 
 function lc() {
   wc -l "$1" | cut -d ' ' -f 1
@@ -177,24 +180,31 @@ done < "$INPUT_FILES"
 rm "$INPUT_FILES"
 
 echo "Starting launcher for BLAST"
+echo "  SLURM_JOB_NUM_NODES=$SLURM_JOB_NUM_NODES"
+echo "  SLURM_NTASKS=$SLURM_NTASKS"
+echo "  SLURM_JOB_CPUS_PER_NODE=$SLURM_JOB_CPUS_PER_NODE"
+echo "  SLURM_TASKS_PER_NODE=$SLURM_TASKS_PER_NODE"
+
 export LAUNCHER_DIR="$HOME/src/launcher"
-export LAUNCHER_NJOBS=$(lc $BLAST_PARAM)
-export LAUNCHER_NHOSTS=4
 export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
 export LAUNCHER_WORKDIR=$BIN
 export LAUNCHER_RMI=SLURM
 export LAUNCHER_JOB_FILE=$BLAST_PARAM
-export LAUNCHER_PPN=4
-export LAUNCHER_SCHED=interleaved
+export LAUNCHER_NJOBS=$(lc $BLAST_PARAM)
+export LAUNCHER_NHOSTS=$SLURM_JOB_NUM_NODES
+export LAUNCHER_NPROCS=`expr $SLURM_JOB_NUM_NODES \* $SLURM_NTASKS \/ $NUM_THREADS`
+export LAUNCHER_PPN=`expr $SLURM_NTASKS \/ $NUM_THREADS`
+export LAUNCHER_SCHED=dynamic
+
+echo "  LAUNCHER_NJOBS=$LAUNCHER_NJOBS"
+echo "  LAUNCHER_NHOSTS=$LAUNCHER_NHOSTS"
+echo "  LAUNCHER_NPROCS=$LAUNCHER_NPROCS"
+echo "  LAUNCHER_PPN=$LAUNCHER_PPN"
+
 $LAUNCHER_DIR/paramrun
 echo "Ended launcher for BLAST"
 
 rm $BLAST_PARAM
-
-# On stampede load python 3 like this:
-module load gcc/4.9.3
-module load python3
-pip3 install --user biopython
 
 # 
 # Now we need to add Eggnog (and eventually Pfam, KEGG, etc.)
@@ -214,12 +224,24 @@ done < $GENE_HITS
 # Probably should run the above annotation with launcher, but I was 
 # having problems with this.
 echo "Starting launcher for annotation"
-export LAUNCHER_NHOSTS=1
+# one thread per task here
 export LAUNCHER_NJOBS=$(lc $ANNOT_PARAM)
 export LAUNCHER_JOB_FILE=$ANNOT_PARAM
+
+export LAUNCHER_NHOSTS=$SLURM_JOB_NUM_NODES
+export LAUNCHER_NPROCS=`expr $SLURM_JOB_NUM_NODES \* $SLURM_NTASKS`
+export LAUNCHER_PPN=`expr $SLURM_NTASKS`
+export LAUNCHER_SCHED=dynamic
+
+echo "  LAUNCHER_NJOBS=$LAUNCHER_NJOBS"
+echo "  LAUNCHER_NHOSTS=$LAUNCHER_NHOSTS"
+echo "  LAUNCHER_NPROCS=$LAUNCHER_NPROCS"
+echo "  LAUNCHER_PPN=$LAUNCHER_PPN"
+
 $LAUNCHER_DIR/paramrun
 echo "Ended launcher for annotation"
-rm "$ANNOT_PARAM"
+
+rm $ANNOT_PARAM
 
 #
 # Now we need to extract the Ohana sequences for the BLAST hits.
@@ -236,9 +258,20 @@ while read FILE; do
 done < $BLAST_HITS
 
 echo "Starting launcher for Ohana sequence extraction"
-export LAUNCHER_NHOSTS=1
+# one thread per task here
 export LAUNCHER_NJOBS=$(lc $EXTRACTSEQS_PARAM)
 export LAUNCHER_JOB_FILE=$EXTRACTSEQS_PARAM
+
+export LAUNCHER_NHOSTS=$SLURM_JOB_NUM_NODES
+export LAUNCHER_NPROCS=`expr $SLURM_JOB_NUM_NODES \* $SLURM_NTASKS`
+export LAUNCHER_PPN=`expr $SLURM_NTASKS`
+export LAUNCHER_SCHED=dynamic
+
+echo "  LAUNCHER_NJOBS=$LAUNCHER_NJOBS"
+echo "  LAUNCHER_NHOSTS=$LAUNCHER_NHOSTS"
+echo "  LAUNCHER_NPROCS=$LAUNCHER_NPROCS"
+echo "  LAUNCHER_PPN=$LAUNCHER_PPN"
+
 $LAUNCHER_DIR/paramrun
 echo "Ended launcher for Ohana sequence extraction"
 rm "$EXTRACTSEQS_PARAM"
@@ -260,11 +293,22 @@ done < $BLAST_HITS
 cat "$INSERTHDR_PARAMS"
 
 echo "Starting launcher for BLAST header insertion"
-export LAUNCHER_NHOSTS=1
+# one thread per task here
 export LAUNCHER_NJOBS=$(lc $INSERTHDR_PARAMS)
 export LAUNCHER_JOB_FILE=$INSERTHDR_PARAMS
+
+export LAUNCHER_NHOSTS=$SLURM_JOB_NUM_NODES
+export LAUNCHER_NPROCS=`expr $SLURM_JOB_NUM_NODES \* $SLURM_NTASKS`
+export LAUNCHER_PPN=`expr $SLURM_NTASKS`
+export LAUNCHER_SCHED=dynamic
+
+echo "  LAUNCHER_NJOBS=$LAUNCHER_NJOBS"
+echo "  LAUNCHER_NHOSTS=$LAUNCHER_NHOSTS"
+echo "  LAUNCHER_NPROCS=$LAUNCHER_NPROCS"
+echo "  LAUNCHER_PPN=$LAUNCHER_PPN"
+
 $LAUNCHER_DIR/paramrun
-echo "Ended launcher for BLAST header insertion"
+echo "Ended launcher for header insertion"
 rm "$INSERTHDR_PARAMS"
 
 #
