@@ -209,18 +209,19 @@ rm $BLAST_PARAM
 
 # 
 # Now we need to add Eggnog (and eventually Pfam, KEGG, etc.)
-# annotations to the "*-genes.tab" files.
+# annotations to the "*-genes.tab" and "*-proteins.tab" files.
 # 
 ANNOT_PARAM="$$.annot.param"
 cat /dev/null > $ANNOT_PARAM
 
-GENE_HITS=$(mktemp)
-find $BLAST_OUT_DIR -size +0c -name \*-genes.tab > $GENE_HITS
+GENE_PROTEIN_HITS=$(mktemp)
+find $BLAST_OUT_DIR -size +0c -name \*-genes.tab > $GENE_PROTEIN_HITS
+find $BLAST_OUT_DIR -size +0c -name \*-proteins.tab >> $GENE_PROTEIN_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Annotating $FILE"
   echo "annotate.py -b \"$FILE\" -a \"${KYC_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
-done < $GENE_HITS
+done < $GENE_PROTEIN_HITS
 
 # Probably should run the above annotation with launcher, but I was 
 # having problems with this.
