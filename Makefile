@@ -1,5 +1,5 @@
 APP = muscope-blast
-VERSION = 0.0.5
+VERSION = 0.0.6
 EMAIL = jklynch@email.arizona.edu
 
 clean:
@@ -17,7 +17,7 @@ apps-addupdate:
 deploy-app: clean files-delete files-upload apps-addupdate
 
 test: clean
-	sbatch stampede/test.sh
+	cd stampede; sbatch test.sh; cd ..
 
 job:
 	jobs-submit -F stampede/job.json
