@@ -21,7 +21,7 @@
     "tags": ["muscope","blast"],
     "templatePath": "template.sh",
     "testPath": "test.sh",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "inputs": [{
         "id": "QUERY",
         "value": {
@@ -60,7 +60,7 @@
             "argument": "-p",
             "showArgument": true
         }
-      }   
+      }
     ],
     "outputs": []
 }
