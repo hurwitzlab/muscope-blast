@@ -32,7 +32,7 @@ function HELP() {
   echo " -p PCT_ID ($PCT_ID)"
   echo " -o OUT_DIR ($OUT_DIR)"
   echo " -n NUM_THREADS ($NUM_THREADS)"
-  echo 
+  echo
   exit 0
 }
 
@@ -67,9 +67,9 @@ while getopts :o:n:p:q:h OPT; do
   esac
 done
 
-# 
-# TACC docs recommend tar'ing a "bin" dir of scripts in order 
-# to maintain file permissions such as the executable bit; 
+#
+# TACC docs recommend tar'ing a "bin" dir of scripts in order
+# to maintain file permissions such as the executable bit;
 # otherwise, you would need to "chmod +x" the files or execute
 # like "python script.py ..."
 #
@@ -113,7 +113,7 @@ if [[ $NUM_INPUT -lt 1 ]]; then
   exit 1
 fi
 
-# Here is a place for fasplit.py to ensure not too 
+# Here is a place for fasplit.py to ensure not too
 # many sequences in each query.
 
 BLAST_DIR="$KYC_WORK/ohana/blast"
@@ -151,7 +151,7 @@ while read INPUT_FILE; do
   fi
 
   BLAST_TO_DNA=""
-  if [[ $TYPE == 'dna' ]]; then 
+  if [[ $TYPE == 'dna' ]]; then
     BLAST_TO_DNA='blastn'
   elif [[ $TYPE == 'prot' ]]; then
     BLAST_TO_DNA='tblastn'
@@ -160,12 +160,12 @@ while read INPUT_FILE; do
   fi
 
   if [[ ${#BLAST_TO_DNA} -gt 0 ]]; then
-    echo "$BLAST_TO_DNA $BLAST_ARGS -perc_identity $PCT_ID -db $BLAST_DIR/contigs -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-contigs.tab" >> $BLAST_PARAM
-    echo "$BLAST_TO_DNA $BLAST_ARGS -perc_identity $PCT_ID -db $BLAST_DIR/genes -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-genes.tab" >> $BLAST_PARAM
+    echo "dos2unix --oldfile $INPUT_FILE; $BLAST_TO_DNA $BLAST_ARGS -perc_identity $PCT_ID -db $BLAST_DIR/contigs -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-contigs.tab" >> $BLAST_PARAM
+    echo "dos2unix --oldfile $INPUT_FILE; $BLAST_TO_DNA $BLAST_ARGS -perc_identity $PCT_ID -db $BLAST_DIR/genes -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-genes.tab" >> $BLAST_PARAM
   fi
 
   BLAST_TO_PROT=""
-  if [[ $TYPE == 'dna' ]]; then 
+  if [[ $TYPE == 'dna' ]]; then
     BLAST_TO_PROT='blastx'
   elif [[ $TYPE == 'prot' ]]; then
     BLAST_TO_PROT='blastp'
@@ -174,7 +174,7 @@ while read INPUT_FILE; do
   fi
 
   if [[ ${#BLAST_TO_PROT} -gt 0 ]]; then
-    echo "$BLAST_TO_PROT $BLAST_ARGS -db $BLAST_DIR/proteins -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-proteins.tab" >> $BLAST_PARAM
+    echo "dos2unix --oldfile $INPUT_FILE; $BLAST_TO_PROT $BLAST_ARGS -db $BLAST_DIR/proteins -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-proteins.tab" >> $BLAST_PARAM
   fi
 done < "$INPUT_FILES"
 rm "$INPUT_FILES"
@@ -207,7 +207,7 @@ echo "Ended launcher for BLAST"
 
 rm $BLAST_PARAM
 
-# 
+#
 # Now we need to add Eggnog (and eventually Pfam, KEGG, etc.)
 # annotations to the "*-genes.tab" and "*-proteins.tab" files.
 # 
@@ -223,7 +223,7 @@ while read FILE; do
   echo "annotate.py -b \"$FILE\" -a \"${KYC_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
 done < $GENE_PROTEIN_HITS
 
-# Probably should run the above annotation with launcher, but I was 
+# Probably should run the above annotation with launcher, but I was
 # having problems with this.
 echo "Starting launcher for annotation"
 # one thread per task here
