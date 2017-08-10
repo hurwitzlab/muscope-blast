@@ -1,4 +1,4 @@
 # Changelog
 
-## 0.0.5
+## 0.0.6
   + run dox2unix on each input file before running BLAST
