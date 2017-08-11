@@ -152,7 +152,7 @@ while read INPUT_FILE; do
 
   BLAST_TO_DNA=""
   if [[ $TYPE == 'dna' ]]; then
-    BLAST_TO_DNA='blastn'
+    BLAST_TO_DNA='blastn -perc_identity $PCT_ID'
   elif [[ $TYPE == 'prot' ]]; then
     BLAST_TO_DNA='tblastn'
   else
@@ -160,8 +160,8 @@ while read INPUT_FILE; do
   fi
 
   if [[ ${#BLAST_TO_DNA} -gt 0 ]]; then
-    echo "dos2unix --oldfile $INPUT_FILE; $BLAST_TO_DNA $BLAST_ARGS -perc_identity $PCT_ID -db $BLAST_DIR/contigs -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-contigs.tab" >> $BLAST_PARAM
-    echo "dos2unix --oldfile $INPUT_FILE; $BLAST_TO_DNA $BLAST_ARGS -perc_identity $PCT_ID -db $BLAST_DIR/genes -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-genes.tab" >> $BLAST_PARAM
+    echo "dos2unix --oldfile $INPUT_FILE; $BLAST_TO_DNA $BLAST_ARGS -db $BLAST_DIR/contigs -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-contigs.tab" >> $BLAST_PARAM
+    echo "dos2unix --oldfile $INPUT_FILE; $BLAST_TO_DNA $BLAST_ARGS -db $BLAST_DIR/genes -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-genes.tab" >> $BLAST_PARAM
   fi
 
   BLAST_TO_PROT=""
@@ -210,7 +210,7 @@ rm $BLAST_PARAM
 #
 # Now we need to add Eggnog (and eventually Pfam, KEGG, etc.)
 # annotations to the "*-genes.tab" and "*-proteins.tab" files.
-# 
+#
 ANNOT_PARAM="$$.annot.param"
 cat /dev/null > $ANNOT_PARAM
 
