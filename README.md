@@ -1,6 +1,6 @@
-# muSCOPE BLAST
+# Ohana BLAST
 
-BLAST for muSCOPE.org
+BLAST for Ohana Gene Catalog on iMicrobe
 
 # Author
 
@@ -10,7 +10,7 @@ Joshua Lynch <jklynch@email.arizona.edu>
 
 # Dependencies
 
-muSCOPE BLAST needs a Python 3 virtual environment called 'mublast'. The file requirements.txt lists the packages that
+Ohana BLAST needs a Python 3 virtual environment called 'mublast'. The file requirements.txt lists the packages that
 must be installed in 'mublast'. Using conda the virtual environment can be created this way:
 
 ```

@@ -1,4 +1,4 @@
-APP = muscope-blast
+APP = ohana-blast
 VERSION = 0.0.6
 EMAIL = jklynch@email.arizona.edu
 
