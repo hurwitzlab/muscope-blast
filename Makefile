@@ -1,5 +1,5 @@
 APP = muscope-blast
-VERSION = 0.0.6
+VERSION = 1.0.0
 EMAIL = jklynch@email.arizona.edu
 
 clean:
@@ -16,11 +16,31 @@ apps-addupdate:
 
 deploy-app: clean files-delete files-upload apps-addupdate
 
-test: clean
-	cd stampede; sbatch test.sh; cd ..
+test:
+	sbatch stampede/test.sh
 
-job:
+jobs-submit:
 	jobs-submit -F stampede/job.json
 
-scriptsgz:
-	(cd scripts && tar cvf ../bin.tgz *)
+container:
+	rm -f singularity/$(APP).img
+	sudo singularity create --size 2000 singularity/$(APP).img
+	sudo singularity bootstrap singularity/$(APP).img singularity/$(APP).def
+	sudo chown --reference=singularity/$(APP).def singularity/$(APP).img
+
+iput-container:
+	rm -f singularity/$(APP).img.xz
+	xz --compress --force --keep singularity/$(APP).img
+	iput -fKP singularity/$(APP).img.xz
+
+iget-container:
+	iget -fKP $(APP).img.xz
+	xz --decompress --force --keep $(APP).img.xz
+	mv $(APP).img singularity/
+	mv $(APP).img.xz stampede/
+
+lytic-rsync-dry-run:
+	rsync -n -arvzP --delete --exclude-from=rsync.exclude -e "ssh -A -t hpc.arizona.edu ssh -A -t lytic" ./ :project/muscope/apps/$(APP)
+
+lytic-rsync:
+	rsync -arvzP --delete --exclude-from=rsync.exclude -e "ssh -A -t hpc.arizona.edu ssh -A -t lytic" ./ :project/muscope/apps/$(APP)
