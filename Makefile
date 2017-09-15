@@ -23,4 +23,4 @@ job:
 	jobs-submit -F stampede/job.json
 
 scriptsgz:
-	(cd scripts && tar cvf ../bin.tgz *)
+	(cd stampede/scripts && tar cvf ../bin.tgz *)
