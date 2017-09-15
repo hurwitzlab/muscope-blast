@@ -14,7 +14,7 @@ files-upload:
 apps-addupdate:
 	apps-addupdate -F stampede/app.json
 
-deploy-app: clean files-delete files-upload apps-addupdate
+deploy-app: clean scriptsgz files-delete files-upload apps-addupdate
 
 test: clean
 	cd stampede; sbatch test.sh; cd ..

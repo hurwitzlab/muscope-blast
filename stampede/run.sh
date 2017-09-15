@@ -2,7 +2,8 @@
 
 # Author: Ken Youens-Clark <kyclark@email.arizona.edu>
 
-KYC_WORK=/work/03137/kyclark
+# KYC_WORK=/work/03137/kyclark
+KYC_WORK=/work/05066/imicrobe/iplantc.org/data
 
 BIN=$( cd "$( dirname "$0" )" && pwd )
 QUERY=""
