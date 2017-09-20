@@ -14,7 +14,7 @@
     "label": "Ohana BLAST",
     "longDescription": "BLAST for Ohana Gene Catalog",
     "modules": [],
-    "name": "Ohana-BLAST",
+    "name": "ohana-blast",
     "ontology": ["http://sswapmeet.sswap.info/agave/apps/Application"],
     "parallelism": "SERIAL",
     "shortDescription": "Ohana BLAST",
