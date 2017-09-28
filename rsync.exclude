@@ -1,0 +1,10 @@
+.cache
+.DS_Store
+.idea
+.git
+*.img*
+*.pyc
+__pycache__
+
+.ipynb_checkpoints/
+cluster_16S.egg-info/
