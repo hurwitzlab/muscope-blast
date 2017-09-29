@@ -9,6 +9,11 @@
 #SBATCH --mail-type BEGIN,END,FAIL
 #SBATCH --mail-user jklynch@email.arizona.edu
 
+module load irods
+iget -f /iplant/home/jklynch/data/muscope/blast/test.fa $SCRATCH/muscope-blast
+
+ls -l $SCRATCH/muscope-blast
+
 OUT_DIR="$SCRATCH/muscope-blast/test"
 
 if [[ -d $OUT_DIR ]]; then

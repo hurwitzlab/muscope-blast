@@ -134,6 +134,8 @@ i=0
 while read INPUT_FILE; do
   BASENAME=$(basename "$INPUT_FILE")
 
+  #dos2unix $INPUT_FILE
+
   let i++
   printf "%3d: %s\n" "$i" "$BASENAME"
   EXT="${BASENAME##*.}"
@@ -153,7 +155,7 @@ while read INPUT_FILE; do
 
   BLAST_TO_DNA=""
   if [[ $TYPE == 'dna' ]]; then
-    BLAST_TO_DNA='blastn -perc_identity $PCT_ID'
+    BLAST_TO_DNA="blastn -perc_identity $PCT_ID"
   elif [[ $TYPE == 'prot' ]]; then
     BLAST_TO_DNA='tblastn'
   else
@@ -161,8 +163,8 @@ while read INPUT_FILE; do
   fi
 
   if [[ ${#BLAST_TO_DNA} -gt 0 ]]; then
-    echo "dos2unix --oldfile $INPUT_FILE; $BLAST_TO_DNA $BLAST_ARGS -db $BLAST_DIR/contigs -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-contigs.tab" >> $BLAST_PARAM
-    echo "dos2unix --oldfile $INPUT_FILE; $BLAST_TO_DNA $BLAST_ARGS -db $BLAST_DIR/genes -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-genes.tab" >> $BLAST_PARAM
+    echo "$BLAST_TO_DNA $BLAST_ARGS -db $BLAST_DIR/contigs -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-contigs.tab" >> $BLAST_PARAM
+    echo "$BLAST_TO_DNA $BLAST_ARGS -db $BLAST_DIR/genes -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-genes.tab" >> $BLAST_PARAM
   fi
 
   BLAST_TO_PROT=""
@@ -175,7 +177,7 @@ while read INPUT_FILE; do
   fi
 
   if [[ ${#BLAST_TO_PROT} -gt 0 ]]; then
-    echo "dos2unix --oldfile $INPUT_FILE; $BLAST_TO_PROT $BLAST_ARGS -db $BLAST_DIR/proteins -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-proteins.tab" >> $BLAST_PARAM
+    echo "$BLAST_TO_PROT $BLAST_ARGS -db $BLAST_DIR/proteins -query $INPUT_FILE -out $BLAST_OUT_DIR/$BASENAME-proteins.tab" >> $BLAST_PARAM
   fi
 done < "$INPUT_FILES"
 rm "$INPUT_FILES"
