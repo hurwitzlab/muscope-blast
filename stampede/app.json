@@ -6,7 +6,7 @@
     "defaultMaxRunTime": "12:00:00",
     "defaultNodeCount": 1,
     "defaultQueue": "serial",
-    "deploymentPath": "jklynch/applications/ohana-blast-0.0.6/stampede",
+    "deploymentPath": "jklynch/applications/ohana-blast-0.0.7/stampede",
     "deploymentSystem": "data.iplantcollaborative.org",
     "executionSystem": "tacc-stampede-jklynch",
     "executionType": "HPC",
@@ -21,7 +21,7 @@
     "tags": ["Ohana","blast"],
     "templatePath": "template.sh",
     "testPath": "test.sh",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "inputs": [{
         "id": "QUERY",
         "value": {

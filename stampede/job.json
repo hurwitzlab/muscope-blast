@@ -1,6 +1,6 @@
 {
   "name": "ohana-blast-test",
-  "appId": "ohana-blast-0.0.6",
+  "appId": "ohana-blast-0.0.7",
   "archive": true,
   "inputs": {
     "QUERY": "agave://data.iplantcollaborative.org/jklynch/data/muscope/blast/test.fa"
