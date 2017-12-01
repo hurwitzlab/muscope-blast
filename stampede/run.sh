@@ -223,7 +223,7 @@ find $BLAST_OUT_DIR -size +0c -name \*-proteins.tab >> $GENE_PROTEIN_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Annotating $FILE"
-  echo "singularity exec ohana-blast.img /scripts/annotate.py -b \"$FILE\" -a \"${KYC_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
+  echo "singularity exec ohana-blast.img python3 /scripts/annotate.py -b \"$FILE\" -a \"${KYC_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
 done < $GENE_PROTEIN_HITS
 
 # Probably should run the above annotation with launcher, but I was
@@ -259,7 +259,7 @@ find $BLAST_OUT_DIR -size +0c -name \*.tab > $BLAST_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Extracting Ohana sequences of BLAST hits for $FILE"
-  echo "singularity exec ohana-blast.img /scripts/extractseqs.py \"$FILE\"  \"${KYC_WORK}/ohana/HOT\" \"${OUT_DIR}/ohana_hits\"" >> $EXTRACTSEQS_PARAM
+  echo "singularity exec ohana-blast.img python3 /scripts/extractseqs.py \"$FILE\"  \"${KYC_WORK}/ohana/HOT\" \"${OUT_DIR}/ohana_hits\"" >> $EXTRACTSEQS_PARAM
 done < $BLAST_HITS
 
 echo "Starting launcher for Ohana sequence extraction"
@@ -292,7 +292,7 @@ find $BLAST_OUT_DIR -size +0c -name \*.tab > $BLAST_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Inserting header in BLAST output $FILE"
-  echo "singularity exec ohana-blast.img /scripts/inserthdr.py \"$FILE\"" >> $INSERTHDR_PARAMS
+  echo "singularity exec ohana-blast.img python3 /scripts/inserthdr.py \"$FILE\"" >> $INSERTHDR_PARAMS
 done < $BLAST_HITS
 
 cat "$INSERTHDR_PARAMS"
