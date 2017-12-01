@@ -1,3 +1,4 @@
+*.img
 slurm-*.out
 blast-annotated
 out
