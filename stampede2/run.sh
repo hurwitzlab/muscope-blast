@@ -66,25 +66,6 @@ while getopts :o:n:p:q:h OPT; do
   esac
 done
 
-#
-# TACC docs recommend tar'ing a "bin" dir of scripts in order
-# to maintain file permissions such as the executable bit;
-# otherwise, you would need to "chmod +x" the files or execute
-# like "python script.py ..."
-#
-SCRIPTS="bin.tgz"
-if [[ -e $SCRIPTS ]]; then
-  echo "Untarring $SCRIPTS to bin"
-  if [[ ! -d bin ]]; then
-    mkdir bin
-  fi
-  tar -C bin -xvf $SCRIPTS
-fi
-
-if [[ -e "$BIN/bin" ]]; then
-  PATH="$BIN/bin:$PATH"
-fi
-
 if [[ $NUM_THREADS -lt 1 ]]; then
   echo "NUM_THREADS \"$NUM_THREADS\" cannot be less than 1"
   exit 1
@@ -126,10 +107,10 @@ fi
 # each KNL processor has 68 cores, 4 threads per core
 # TACC recommends against running 68 * 4 = 272 threads
 # let's run 68 for BLAST divided amoung 4 tasks and see what happens
-# or we could just say 20 threads for each of 4 tasks
+# or we could just say 40 threads for each of 4 tasks
 # see the launcher configuration below for LAUNCHER_PPN=4
 BLAST_DIR="$IMICROBE_WORK/ohana/blast"
-BLAST_ARGS="-outfmt 6 -num_threads 20"
+BLAST_ARGS="-outfmt 6 -num_threads 40"
 BLAST_PARAM="$$.blast.param"
 
 cat /dev/null > $BLAST_PARAM # make sure it's empty
