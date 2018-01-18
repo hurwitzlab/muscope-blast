@@ -19,7 +19,7 @@ deploy-app: clean files-delete files-upload apps-addupdate
 test: clean
 	cd stampede2; sbatch test.sh; cd ..
 
-job:
+submit-test-job:
 	jobs-submit -F stampede2/job.json
 
 container:
