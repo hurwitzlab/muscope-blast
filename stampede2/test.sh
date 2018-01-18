@@ -11,7 +11,6 @@
 
 #module load irods
 #iget -f /iplant/home/jklynch/data/muscope/blast/test.fa $SCRATCH/muscope-blast
-
 #ls -l $SCRATCH/muscope-blast
 
 OUT_DIR="$SCRATCH/ohana-blast/test"

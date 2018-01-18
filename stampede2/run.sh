@@ -122,8 +122,14 @@ if [[ ! -d "$BLAST_DIR" ]]; then
   exit 1
 fi
 
+# assume this job is running on Stampede 2 KNL queue (normal)
+# each KNL processor has 68 cores, 4 threads per core
+# TACC recommends against running 68 * 4 = 272 threads
+# let's run 68 for BLAST divided amoung 4 tasks and see what happens
+# or we could just say 20 threads for each of 4 tasks
+# see the launcher configuration below for LAUNCHER_PPN=4
 BLAST_DIR="$IMICROBE_WORK/ohana/blast"
-BLAST_ARGS="-outfmt 6 -num_threads $NUM_THREADS"
+BLAST_ARGS="-outfmt 6 -num_threads 20"
 BLAST_PARAM="$$.blast.param"
 
 cat /dev/null > $BLAST_PARAM # make sure it's empty
@@ -192,10 +198,15 @@ export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
 export LAUNCHER_WORKDIR=$BIN
 export LAUNCHER_RMI=SLURM
 export LAUNCHER_JOB_FILE=$BLAST_PARAM
-export LAUNCHER_NJOBS=$(lc $BLAST_PARAM)
-export LAUNCHER_NHOSTS=$SLURM_JOB_NUM_NODES
-export LAUNCHER_NPROCS=`expr $SLURM_JOB_NUM_NODES \* $SLURM_NTASKS \/ $NUM_THREADS`
-export LAUNCHER_PPN=`expr $SLURM_NTASKS \/ $NUM_THREADS`
+
+## no need to set these - the launcher figures it out by talking to slurm
+##export LAUNCHER_NJOBS=$(lc $BLAST_PARAM)
+##export LAUNCHER_NHOSTS=$SLURM_JOB_NUM_NODES
+##export LAUNCHER_NPROCS=`expr $SLURM_JOB_NUM_NODES \* $SLURM_NTASKS \/ $NUM_THREADS`
+
+# set this one
+export LAUNCHER_PPN=4
+
 export LAUNCHER_SCHED=dynamic
 
 echo "  LAUNCHER_NJOBS=$LAUNCHER_NJOBS"
