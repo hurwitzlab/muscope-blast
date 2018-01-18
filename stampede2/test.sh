@@ -4,7 +4,7 @@
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -t 00:30:00
-#SBATCH -p normal
+#SBATCH -p skx-normal
 #SBATCH -J ohana-blast-test
 #SBATCH --mail-type BEGIN,END,FAIL
 #SBATCH --mail-user jklynch@email.arizona.edu

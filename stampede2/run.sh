@@ -103,14 +103,14 @@ if [[ ! -d "$BLAST_DIR" ]]; then
   exit 1
 fi
 
-# assume this job is running on Stampede 2 KNL queue (normal)
+# assume this job is running on Stampede 2 SKX queue (skx-normal)
+# each SKX node has 48*2=96 hardware cores
 # each KNL processor has 68 cores, 4 threads per core
 # TACC recommends against running 68 * 4 = 272 threads
-# let's run 68 for BLAST divided amoung 4 tasks and see what happens
-# or we could just say 40 threads for each of 4 tasks
+# or we could just say 24 threads for each of 4 tasks
 # see the launcher configuration below for LAUNCHER_PPN=4
 BLAST_DIR="$IMICROBE_WORK/ohana/blast"
-BLAST_ARGS="-outfmt 6 -num_threads 40"
+BLAST_ARGS="-outfmt 6 -num_threads 24"
 BLAST_PARAM="$$.blast.param"
 
 cat /dev/null > $BLAST_PARAM # make sure it's empty
