@@ -15,10 +15,8 @@ From: ubuntu:latest
    /usr/bin/pip3 install --upgrade pip
    /usr/bin/pip3 install numpy
 
-   #/usr/bin/pip3 install /imicrobe-16SrDNA-OTU-Clustering[dev,test]
-
    mkdir /scripts
-   cp /muscope-blast/stampede/scripts/*.py /scripts/
+   cp /muscope-blast/scripts/*.py /scripts/
 
    # create mount points for TACC directories
    mkdir /home1

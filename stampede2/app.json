@@ -6,9 +6,9 @@
     "defaultMaxRunTime": "12:00:00",
     "defaultNodeCount": 1,
     "defaultQueue": "serial",
-    "deploymentPath": "jklynch/applications/ohana-blast-0.0.7/stampede",
+    "deploymentPath": "jklynch/applications/ohana-blast-0.0.8/stampede2",
     "deploymentSystem": "data.iplantcollaborative.org",
-    "executionSystem": "tacc-stampede-jklynch",
+    "executionSystem": "tacc-stampede2-jklynch",
     "executionType": "HPC",
     "helpURI": "http://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0997-x",
     "label": "Ohana BLAST",
@@ -21,7 +21,7 @@
     "tags": ["Ohana","blast"],
     "templatePath": "template.sh",
     "testPath": "test.sh",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "inputs": [{
         "id": "QUERY",
         "value": {

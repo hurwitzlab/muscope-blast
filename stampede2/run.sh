@@ -2,8 +2,7 @@
 
 # Author: Ken Youens-Clark <kyclark@email.arizona.edu>
 
-# KYC_WORK=/work/03137/kyclark
-KYC_WORK=/work/05066/imicrobe/iplantc.org/data
+IMICROBE_WORK=/work/05066/imicrobe/iplantc.org/data
 
 BIN=$( cd "$( dirname "$0" )" && pwd )
 QUERY=""
@@ -12,10 +11,9 @@ OUT_DIR="$BIN"
 NUM_THREADS=$SLURM_TASKS_PER_NODE
 
 module load blast
+module load launcher
+module load tacc-singularity
 
-##source activate mublast
-
-# after source activate mublast
 set -u
 
 function lc() {
@@ -117,14 +115,14 @@ fi
 # Here is a place for fasplit.py to ensure not too
 # many sequences in each query.
 
-BLAST_DIR="$KYC_WORK/ohana/blast"
+BLAST_DIR="$IMICROBE_WORK/ohana/blast"
 
 if [[ ! -d "$BLAST_DIR" ]]; then
   echo "BLAST_DIR \"$BLAST_DIR\" does not exist."
   exit 1
 fi
 
-BLAST_DIR="$KYC_WORK/ohana/blast"
+BLAST_DIR="$IMICROBE_WORK/ohana/blast"
 BLAST_ARGS="-outfmt 6 -num_threads $NUM_THREADS"
 BLAST_PARAM="$$.blast.param"
 
@@ -223,7 +221,7 @@ find $BLAST_OUT_DIR -size +0c -name \*-proteins.tab >> $GENE_PROTEIN_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Annotating $FILE"
-  echo "singularity exec ohana-blast.img python3 /scripts/annotate.py -b \"$FILE\" -a \"${KYC_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
+  echo "singularity exec ohana-blast.img python3 /scripts/annotate.py -b \"$FILE\" -a \"${IMICROBE_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
 done < $GENE_PROTEIN_HITS
 
 # Probably should run the above annotation with launcher, but I was
@@ -259,7 +257,7 @@ find $BLAST_OUT_DIR -size +0c -name \*.tab > $BLAST_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Extracting Ohana sequences of BLAST hits for $FILE"
-  echo "singularity exec ohana-blast.img python3 /scripts/extractseqs.py \"$FILE\"  \"${KYC_WORK}/ohana/HOT\" \"${OUT_DIR}/ohana_hits\"" >> $EXTRACTSEQS_PARAM
+  echo "singularity exec ohana-blast.img python3 /scripts/extractseqs.py \"$FILE\"  \"${IMICROBE_WORK}/ohana/HOT\" \"${OUT_DIR}/ohana_hits\"" >> $EXTRACTSEQS_PARAM
 done < $BLAST_HITS
 
 echo "Starting launcher for Ohana sequence extraction"
