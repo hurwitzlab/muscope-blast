@@ -13,7 +13,7 @@ From: ubuntu:latest
    apt install -y openjdk-9-jre-headless
 
    /usr/bin/pip3 install --upgrade pip
-   /usr/bin/pip3 install numpy
+   /usr/bin/pip3 install biopython numpy
 
    mkdir /scripts
    cp /muscope-blast/scripts/*.py /scripts/
