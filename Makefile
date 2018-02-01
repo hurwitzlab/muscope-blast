@@ -22,6 +22,9 @@ test: clean
 submit-test-job:
 	jobs-submit -F stampede2/job.json
 
+submit-public-test-job:
+	jobs-submit -F stampede2/job-public.json
+
 container:
 	rm -f stampede2/$(APP).img
 	sudo singularity create --size 1000 stampede2/$(APP).img
