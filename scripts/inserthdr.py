@@ -4,7 +4,7 @@ This script inserts a header row into a BLAST output file. The header looks like
     qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore
 
 usage:
-    python3 inserthdr.py test.fa-contigs.tab
+    python3 inserthdr.py test_HOT224_1_0025m.fa-contigs.tab
 """
 import argparse
 import shutil

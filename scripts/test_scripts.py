@@ -72,18 +72,18 @@ def test_find_sequences__last():
 
 
 def test_parse_blast_output_filename__contigs():
-    blast_input_file_name, seq_type = extractseqs.parse_muscope_blast_output_filename('/some/dir/test.fa-contigs.tab')
-    assert blast_input_file_name == 'test.fa'
+    blast_input_file_name, seq_type = extractseqs.parse_muscope_blast_output_filename('/some/dir/test_HOT224_1_0025m.fa-contigs.tab')
+    assert blast_input_file_name == 'test_HOT224_1_0025m.fa'
     assert seq_type == 'contigs'
 
 
 def test_parse_blast_output_filename__genes():
-    blast_input_file_name, seq_type = extractseqs.parse_muscope_blast_output_filename('/some/dir/test.fa-genes.tab')
-    assert blast_input_file_name == 'test.fa'
+    blast_input_file_name, seq_type = extractseqs.parse_muscope_blast_output_filename('/some/dir/test_HOT224_1_0025m.fa-genes.tab')
+    assert blast_input_file_name == 'test_HOT224_1_0025m.fa'
     assert seq_type == 'genes'
 
 
 def test_parse_blast_output_filename__proteins():
-    blast_input_file_name, seq_type = extractseqs.parse_muscope_blast_output_filename('/some/dir/test.fa-proteins.tab')
-    assert blast_input_file_name == 'test.fa'
+    blast_input_file_name, seq_type = extractseqs.parse_muscope_blast_output_filename('/some/dir/test_HOT224_1_0025m.fa-proteins.tab')
+    assert blast_input_file_name == 'test_HOT224_1_0025m.fa'
     assert seq_type == 'proteins'

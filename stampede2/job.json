@@ -3,7 +3,7 @@
   "appId": "ohana-blast-0.0.8",
   "archive": true,
   "inputs": {
-    "QUERY": "agave://data.iplantcollaborative.org/jklynch/data/muscope/blast/test.fa"
+    "QUERY": "agave://data.iplantcollaborative.org/shared/imicrobe/test/apps/ohana-blast/test_HOT224_1_0025m.fa"
   },
   "parameter": {
   }
