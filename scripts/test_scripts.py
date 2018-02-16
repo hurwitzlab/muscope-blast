@@ -7,7 +7,10 @@ blast_output_text = """\
 A\tHOT234_1_0200m_rep_c55158_2\t100.00\t147\t0\t0\t1\t147\t400\t546 2e-70\t272
 A\tHOT234_1_0200m_c10096_4\t100.00\t147\t0\t0\t1\t147\t400\t546\t2e-70\t272
 A\tHOT238_1c_0200m_c3_1\t100.00\t147\t0\t0\t1\t147\t1\t147\t2e-70\t272
-A\tHOT238_1c_0200m_rep_c260499_1\t100.00\t147\t0\t0\t1\t147\t400\t546\t2e-70\t272"""
+A\tHOT238_1c_0200m_rep_c260499_1\t100.00\t147\t0\t0\t1\t147\t400\t546\t2e-70\t272
+B\tHOT234_1_0200m_rep_c55158_2\t100.00\t147\t0\t0\t1\t147\t400\t546 2e-70\t272
+B\tHOT234_1_0200m_c10096_4\t100.00\t147\t0\t0\t1\t147\t400\t546\t2e-70\t272
+C\tHOT238_1c_0200m_c3_1\t100.00\t147\t0\t0\t1\t147\t1\t147\t2e-70\t272"""
 
 fasta_text = """\
 >A
@@ -20,7 +23,8 @@ ATGG"""
 
 def test_get_blast_hits():
     blast_output_file = io.StringIO(blast_output_text)
-    blast_hits = extractseqs.get_blast_reference_hits(blast_output_file=blast_output_file, blast_output_row_limit=None)
+    blast_hits, seqid_counts = extractseqs.get_blast_reference_hits(blast_output_file=blast_output_file, blast_output_row_limit=None)
+
     assert len(blast_hits) == 2
     assert len(blast_hits['HOT234_1_0200m']) == 2
     assert 'HOT234_1_0200m_rep_c55158_2' in blast_hits['HOT234_1_0200m']
@@ -29,16 +33,28 @@ def test_get_blast_hits():
     assert 'HOT238_1c_0200m_c3_1' in blast_hits['HOT238_1c_0200m']
     assert 'HOT238_1c_0200m_rep_c260499_1' in blast_hits['HOT238_1c_0200m']
 
+    assert len(seqid_counts) == 4
+    assert seqid_counts['HOT234_1_0200m_rep_c55158_2'] == 2
+    assert seqid_counts['HOT234_1_0200m_c10096_4'] == 2
+    assert seqid_counts['HOT238_1c_0200m_c3_1'] == 2
+    assert seqid_counts['HOT238_1c_0200m_rep_c260499_1'] == 1
+
 
 def test_get_blast_hits__limit():
     blast_output_file = io.StringIO(blast_output_text)
-    blast_hits = extractseqs.get_blast_reference_hits(blast_output_file=blast_output_file, blast_output_row_limit=3)
+    blast_hits, seqid_counts = extractseqs.get_blast_reference_hits(blast_output_file=blast_output_file, blast_output_row_limit=3)
+
     assert len(blast_hits) == 2
     assert len(blast_hits['HOT234_1_0200m']) == 2
     assert 'HOT234_1_0200m_rep_c55158_2' in blast_hits['HOT234_1_0200m']
     assert 'HOT234_1_0200m_c10096_4' in blast_hits['HOT234_1_0200m']
     assert len(blast_hits['HOT238_1c_0200m']) == 1
     assert 'HOT238_1c_0200m_c3_1' in blast_hits['HOT238_1c_0200m']
+
+    assert len(seqid_counts) == 3
+    assert seqid_counts['HOT234_1_0200m_rep_c55158_2'] == 1
+    assert seqid_counts['HOT234_1_0200m_c10096_4'] == 1
+    assert seqid_counts['HOT238_1c_0200m_c3_1'] == 1
 
 
 def test_find_sequences():
