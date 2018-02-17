@@ -180,19 +180,11 @@ export LAUNCHER_WORKDIR=$BIN
 export LAUNCHER_RMI=SLURM
 export LAUNCHER_JOB_FILE=$BLAST_PARAM
 
-## no need to set these - the launcher figures it out by talking to slurm
-##export LAUNCHER_NJOBS=$(lc $BLAST_PARAM)
-##export LAUNCHER_NHOSTS=$SLURM_JOB_NUM_NODES
-##export LAUNCHER_NPROCS=`expr $SLURM_JOB_NUM_NODES \* $SLURM_NTASKS \/ $NUM_THREADS`
-
 # set this one
 export LAUNCHER_PPN=4
 
 export LAUNCHER_SCHED=dynamic
 
-#echo "  LAUNCHER_NJOBS=$LAUNCHER_NJOBS"
-#echo "  LAUNCHER_NHOSTS=$LAUNCHER_NHOSTS"
-#echo "  LAUNCHER_NPROCS=$LAUNCHER_NPROCS"
 echo "  LAUNCHER_PPN=$LAUNCHER_PPN"
 
 $LAUNCHER_DIR/paramrun
@@ -223,14 +215,9 @@ echo "Starting launcher for annotation"
 export LAUNCHER_NJOBS=$(lc $ANNOT_PARAM)
 export LAUNCHER_JOB_FILE=$ANNOT_PARAM
 
-#export LAUNCHER_NHOSTS=$SLURM_JOB_NUM_NODES
-#export LAUNCHER_NPROCS=`expr $SLURM_JOB_NUM_NODES \* $SLURM_NTASKS`
 export LAUNCHER_PPN=4
 export LAUNCHER_SCHED=dynamic
 
-#echo "  LAUNCHER_NJOBS=$LAUNCHER_NJOBS"
-#echo "  LAUNCHER_NHOSTS=$LAUNCHER_NHOSTS"
-#echo "  LAUNCHER_NPROCS=$LAUNCHER_NPROCS"
 echo "  LAUNCHER_PPN=$LAUNCHER_PPN"
 
 $LAUNCHER_DIR/paramrun
@@ -249,7 +236,7 @@ find $BLAST_OUT_DIR -size +0c -name \*.tab > $BLAST_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Extracting Ohana sequences of BLAST hits for $FILE"
-  echo "singularity exec ohana-blast.img python3 /scripts/extractseqs.py \"$FILE\"  \"${IMICROBE_WORK}/ohana/HOT\" \"${OUT_DIR}/ohana_hits\"" >> $EXTRACTSEQS_PARAM
+  echo "singularity exec ohana-blast.img python3 /scripts/extractseqs.py \"$FILE\"  \"${IMICROBE_WORK}/ohana/HOT\" \"${OUT_DIR}/ohana-hits\"" >> $EXTRACTSEQS_PARAM
 done < $BLAST_HITS
 
 echo "Starting launcher for Ohana sequence extraction"

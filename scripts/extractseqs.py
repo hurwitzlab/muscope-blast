@@ -69,7 +69,7 @@ def main(blast_output_fp, ohana_sequence_dp, ohana_hit_output_dp, blast_hit_limi
     )
     output_file_path_template = os.path.join(
         ohana_hit_output_dp,
-        blast_input_base_name + '-{refsample}-' + seq_type + seq_type_ext[seq_type]
+        blast_input_base_name + '-{refsample}-' + seq_type + '{ext}'
     )
 
     # parse the BLAST output file
@@ -80,7 +80,8 @@ def main(blast_output_fp, ohana_sequence_dp, ohana_hit_output_dp, blast_hit_limi
     print('finished parsing BLAST output file "{}"'.format(blast_output_fp))
 
     # write a file of seqid counts
-    seqid_count_fp = output_file_path_template.format(refsample='seqid-count')
+    seqid_count_fp = output_file_path_template.format(refsample='seqid-count', ext='.tab')
+    print('writing file "{}"'.format(seqid_count_fp))
     with open(seqid_count_fp, 'wt') as seqid_count_file:
         seqid_count_file.write(
             '\n'.join([
@@ -98,7 +99,7 @@ def main(blast_output_fp, ohana_sequence_dp, ohana_hit_output_dp, blast_hit_limi
             print('ERROR: BLAST reference "{}" does not exist'.format(blast_ref_sample_fasta_fp))
         else:
             print('extracting sequence hits from "{}"'.format(blast_ref_sample_fasta_fp))
-            output_fp = output_file_path_template.format(refsample=blast_ref_sample_name)
+            output_fp = output_file_path_template.format(refsample=blast_ref_sample_name, ext=seq_type_ext[seq_type])
             with open(blast_ref_sample_fasta_fp, 'rt') as sample_fasta_file, \
                     open(output_fp, 'wt') as sample_sequence_output_file:
 
