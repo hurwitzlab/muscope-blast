@@ -1,5 +1,5 @@
 APP = ohana-blast
-VERSION = 0.0.8
+VERSION = 0.0.9
 EMAIL = jklynch@email.arizona.edu
 
 clean:
