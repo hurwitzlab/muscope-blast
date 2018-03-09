@@ -208,15 +208,12 @@ while read FILE; do
   echo "singularity exec ohana-blast.img python3 /scripts/annotate.py -b \"$FILE\" -a \"${IMICROBE_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
 done < $GENE_PROTEIN_HITS
 
-# Probably should run the above annotation with launcher, but I was
-# having problems with this.
 echo "Starting launcher for annotation"
-# one thread per task here
-export LAUNCHER_NJOBS=$(lc $ANNOT_PARAM)
 export LAUNCHER_JOB_FILE=$ANNOT_PARAM
 
 export LAUNCHER_PPN=4
-export LAUNCHER_SCHED=dynamic
+# I would rather use 'dynamic' but it is failing often
+export LAUNCHER_SCHED=interleaved
 
 echo "  LAUNCHER_PPN=$LAUNCHER_PPN"
 
@@ -240,18 +237,10 @@ while read FILE; do
 done < $BLAST_HITS
 
 echo "Starting launcher for Ohana sequence extraction"
-# one thread per task here
-export LAUNCHER_NJOBS=$(lc $EXTRACTSEQS_PARAM)
 export LAUNCHER_JOB_FILE=$EXTRACTSEQS_PARAM
 
-#export LAUNCHER_NHOSTS=$SLURM_JOB_NUM_NODES
-#export LAUNCHER_NPROCS=`expr $SLURM_JOB_NUM_NODES \* $SLURM_NTASKS`
 export LAUNCHER_PPN=4
-export LAUNCHER_SCHED=dynamic
-
-#echo "  LAUNCHER_NJOBS=$LAUNCHER_NJOBS"
-#echo "  LAUNCHER_NHOSTS=$LAUNCHER_NHOSTS"
-#echo "  LAUNCHER_NPROCS=$LAUNCHER_NPROCS"
+export LAUNCHER_SCHED=interleaved
 echo "  LAUNCHER_PPN=$LAUNCHER_PPN"
 
 $LAUNCHER_DIR/paramrun
@@ -275,18 +264,10 @@ done < $BLAST_HITS
 cat "$INSERTHDR_PARAMS"
 
 echo "Starting launcher for BLAST header insertion"
-# one thread per task here
-export LAUNCHER_NJOBS=$(lc $INSERTHDR_PARAMS)
 export LAUNCHER_JOB_FILE=$INSERTHDR_PARAMS
 
-#export LAUNCHER_NHOSTS=$SLURM_JOB_NUM_NODES
-#export LAUNCHER_NPROCS=`expr $SLURM_JOB_NUM_NODES \* $SLURM_NTASKS`
 export LAUNCHER_PPN=4
-export LAUNCHER_SCHED=dynamic
-
-#echo "  LAUNCHER_NJOBS=$LAUNCHER_NJOBS"
-#echo "  LAUNCHER_NHOSTS=$LAUNCHER_NHOSTS"
-#echo "  LAUNCHER_NPROCS=$LAUNCHER_NPROCS"
+export LAUNCHER_SCHED=interleaved
 echo "  LAUNCHER_PPN=$LAUNCHER_PPN"
 
 $LAUNCHER_DIR/paramrun
