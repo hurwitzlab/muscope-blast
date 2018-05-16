@@ -28,8 +28,8 @@ submit-public-test-job:
 container:
 	rm -f singularity/$(APP)-$(VERSION).img
 	sudo singularity create --size 1000 singularity/$(APP)-$(VERSION).img
-	sudo singularity bootstrap singularity/$(APP)-$(VERSION).img singularity/$(APP)-$(VERSION).def
-	sudo chown --reference=singularity/$(APP)-$(VERSION).def singularity/$(APP)-$(VERSION).img
+	sudo singularity bootstrap singularity/$(APP)-$(VERSION).img singularity/$(APP).def
+	sudo chown --reference=singularity/$(APP).def singularity/$(APP)-$(VERSION).img
 
 iput-container:
 	iput -fK singularity/$(APP)-$(VERSION).img
