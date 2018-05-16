@@ -5,13 +5,13 @@
 #SBATCH -n 1
 #SBATCH -t 00:30:00
 #SBATCH -p skx-normal
-#SBATCH -J ohana-blast-test
+#SBATCH -J aloha-blast-test
 #SBATCH --mail-type BEGIN,END,FAIL
 #SBATCH --mail-user jklynch@email.arizona.edu
 
 module load irods
 
-OUT_DIR="$SCRATCH/ohana-blast-test"
+OUT_DIR="$SCRATCH/aloha-blast-test"
 if [[ -d $OUT_DIR ]]; then
   rm -rf $OUT_DIR
 fi

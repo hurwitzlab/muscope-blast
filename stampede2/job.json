@@ -1,6 +1,6 @@
 {
-  "name": "ohana-blast-test",
-  "appId": "ohana-blast-0.0.9",
+  "name": "aloha-blast-test",
+  "appId": "aloha-blast-1.0.0",
   "archive": true,
   "inputs": {
     "QUERY": "agave://data.iplantcollaborative.org/shared/imicrobe/test/apps/ohana-blast/test_HOT224_1_0025m.fa"

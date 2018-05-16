@@ -1,6 +1,6 @@
 {
-  "name": "ohana-blast-public-test",
-  "appId": "ohana-blast-0.0.9u2",
+  "name": "aloha-blast-public-test",
+  "appId": "aloha-blast-1.0.0u1",
   "archive": true,
   "maxRunTime": "00:20:00",
   "inputs": {

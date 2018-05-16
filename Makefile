@@ -1,5 +1,5 @@
-APP = ohana-blast
-VERSION = 0.0.9
+APP = aloha-blast
+VERSION = 1.0.0
 EMAIL = jklynch@email.arizona.edu
 
 clean:
@@ -26,21 +26,20 @@ submit-public-test-job:
 	jobs-submit -F stampede2/job-public.json
 
 container:
-	rm -f stampede2/$(APP).img
-	sudo singularity create --size 1000 stampede2/$(APP).img
-	sudo singularity bootstrap stampede2/$(APP).img singularity/$(APP).def
-	sudo chown --reference=singularity/$(APP).def stampede2/$(APP).img
+	rm -f singularity/$(APP)-$(VERSION).img
+	sudo singularity create --size 1000 singularity/$(APP)-$(VERSION).img
+	sudo singularity bootstrap singularity/$(APP)-$(VERSION).img singularity/$(APP)-$(VERSION).def
+	sudo chown --reference=singularity/$(APP)-$(VERSION).def singularity/$(APP)-$(VERSION).img
 
 iput-container:
-	iput -fK stampede2/$(APP).img
+	iput -fK singularity/$(APP)-$(VERSION).img
 
 iget-container:
-	iget -fK $(APP).img
-	mv $(APP).img stampede2/
-	irm $(APP).img
+	cd /work/05066/imicrobe/singularity/; iget -fK $(APP)-$(VERSION).img; chmod ag+r $(APP)-$(VERSION).img
+	irm $(APP)-$(VERSION).img
 
 lytic-rsync-dry-run:
-	rsync -n -arvzP --delete --exclude-from=rsync.exclude -e "ssh -A -t hpc ssh -A -t lytic" ./ :project/imicrobe/apps/ohana-blast
+	rsync -n -arvzP --delete --exclude-from=rsync.exclude -e "ssh -A -t hpc ssh -A -t lytic" ./ :project/imicrobe/apps/aloha-blast
 
 lytic-rsync:
-	rsync -arvzP --delete --exclude-from=rsync.exclude -e "ssh -A -t hpc ssh -A -t lytic" ./ :project/imicrobe/apps/ohana-blast
+	rsync -arvzP --delete --exclude-from=rsync.exclude -e "ssh -A -t hpc ssh -A -t lytic" ./ :project/imicrobe/apps/aloha-blast
