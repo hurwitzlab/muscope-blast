@@ -11,8 +11,14 @@ OUT_DIR="$BIN"
 NUM_THREADS=$SLURM_TASKS_PER_NODE
 
 module load blast
-module load launcher
 module load tacc-singularity
+
+# the next two lines load 'testing' version
+# of the TACC launcher
+module use /scratch/01255/siliu/modulefiles
+module load launcher/3.2
+
+BLAST_IMG=/work/05066/imicrobe/singularity/aloha-blast-1.0.0.img
 
 set -u
 
@@ -205,7 +211,7 @@ find $BLAST_OUT_DIR -size +0c -name \*-proteins.tab >> $GENE_PROTEIN_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Annotating $FILE"
-  echo "singularity exec ohana-blast.img python3 /scripts/annotate.py -b \"$FILE\" -a \"${IMICROBE_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
+  echo "singularity exec ${BLAST_IMG} python3 /scripts/annotate.py -b \"$FILE\" -a \"${IMICROBE_WORK}/ohana/sqlite\" -o \"${OUT_DIR}/annotations\"" >> $ANNOT_PARAM
 done < $GENE_PROTEIN_HITS
 
 echo "Starting launcher for annotation"
@@ -233,7 +239,7 @@ find $BLAST_OUT_DIR -size +0c -name \*.tab > $BLAST_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Extracting Ohana sequences of BLAST hits for $FILE"
-  echo "singularity exec ohana-blast.img python3 /scripts/extractseqs.py \"$FILE\"  \"${IMICROBE_WORK}/ohana/HOT\" \"${OUT_DIR}/ohana-hits\"" >> $EXTRACTSEQS_PARAM
+  echo "singularity exec ${BLAST_IMG} python3 /scripts/extractseqs.py \"$FILE\"  \"${IMICROBE_WORK}/ohana/HOT\" \"${OUT_DIR}/ohana-hits\"" >> $EXTRACTSEQS_PARAM
 done < $BLAST_HITS
 
 echo "Starting launcher for Ohana sequence extraction"
@@ -258,7 +264,7 @@ find $BLAST_OUT_DIR -size +0c -name \*.tab > $BLAST_HITS
 while read FILE; do
   BASENAME=$(basename $FILE '.tab')
   echo "Inserting header in BLAST output $FILE"
-  echo "singularity exec ohana-blast.img python3 /scripts/inserthdr.py \"$FILE\"" >> $INSERTHDR_PARAMS
+  echo "singularity exec ${BLAST_IMG} python3 /scripts/inserthdr.py \"$FILE\"" >> $INSERTHDR_PARAMS
 done < $BLAST_HITS
 
 cat "$INSERTHDR_PARAMS"
